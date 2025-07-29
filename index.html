@@ -1,3 +1,15 @@
+Entiendo. Parece que, a pesar de la corrección en la definición de las palabras, el crucigrama sigue sin mostrar las respuestas correctamente, y la función "Mostrar Solución" no está rellenando la cuadrícula. Esto sugiere que hay un problema con cómo el JavaScript accede y manipula las celdas de la cuadrícula.
+
+El problema principal que he identificado está en cómo se calcula el número de columnas de la cuadrícula (`maxCols` o `maxCurrentCols`) dentro de las funciones JavaScript que rellenan o comprueban las celdas (`initializeGrid`, `checkAnswers`, `showSolution`). Estas funciones están intentando obtener el número de columnas directamente del estilo CSS `gridTemplateColumns` del elemento HTML en el momento de la ejecución, lo cual puede no ser fiable o estar correctamente establecido en ese instante.
+
+Para solucionar esto, he hecho la siguiente modificación:
+
+1.  He introducido una variable global llamada `gridWidth` que se inicializa una vez y de forma precisa dentro de la función `initializeGrid` (cuando se determina el tamaño real de la cuadrícula).
+2.  Todas las funciones que necesitan saber el ancho de la cuadrícula (como `checkAnswers` y `showSolution`) ahora usan esta variable `gridWidth` en lugar de intentar recalcularla desde el CSS. Esto asegura que la indexación de las celdas (`row * maxCols + col`) sea siempre correcta.
+
+Aquí tienes el código HTML completo y corregido. Por favor, reemplaza el contenido de tu archivo HTML actual con este código:
+
+```html
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -244,9 +256,6 @@
                 { word: 'ARMONIA', clue: 'Combinación de sonidos simultáneos que resultan agradables.', start: { row: 4, col: 0 }, direction: 'across', number: 3 },
                 { word: 'TONO', clue: 'Altura de un sonido.', start: { row: 6, col: 5 }, direction: 'across', number: 4 },
                 { word: 'COMPAS', clue: 'División de la música en partes iguales de tiempo.', start: { row: 8, col: 1 }, direction: 'across', number: 5 },
-                // CORRECCIÓN AQUÍ:
-                // Se cambió la columna de inicio de 'NOTAS' a '2' para que se cruce con la 'O' de 'MELODIA'
-                // Se cambió el número de 'NOTAS' a '10' para evitar duplicidad con el número 1.
                 { word: 'NOTAS', clue: 'Signos que representan los sonidos musicales.', start: { row: 0, col: 2 }, direction: 'down', number: 10 },
                 { word: 'TIMBRE', clue: 'Cualidad del sonido que permite distinguir la fuente sonora.', start: { row: 1, col: 4 }, direction: 'down', number: 6 },
                 { word: 'ESCALA', clue: 'Sucesión de sonidos ascendentes o descendentes.', start: { row: 3, col: 6 }, direction: 'down', number: 7 },
@@ -266,6 +275,10 @@
         const messageOkButton = document.getElementById('message-ok-button');
         let gridCells = []; // To store references to input elements
 
+        // Variables globales para las dimensiones de la cuadrícula
+        let gridWidth = 0;
+        let gridHeight = 0;
+
         // Function to display custom messages
         function showMessage(title, content) {
             messageTitle.textContent = title;
@@ -277,6 +290,7 @@
         messageOkButton.addEventListener('click', () => {
             messageBox.style.display = 'none';
         });
+
         // Function to initialize the crossword grid
         function initializeGrid() {
             // Determine grid dimensions dynamically based on words
@@ -295,13 +309,20 @@
             maxRow += 2;
             maxCol += 2;
 
+            // Almacenar las dimensiones de la cuadrícula globalmente
+            gridWidth = maxCol;
+            gridHeight = maxRow;
+
             // Create an empty grid with black cells
-            const grid = Array(maxRow).fill(0).map(() => Array(maxCol).fill(''));
+            const grid = Array(gridHeight).fill(0).map(() => Array(gridWidth).fill('')); // Usar gridHeight y gridWidth
             // Place words into the grid and mark cells as playable
             crosswordData.words.forEach(word => {
                 let { row, col } = word.start;
                 for (let i = 0; i < word.word.length; i++) {
-                    grid[row][col] = { char: word.word[i], playable: true };
+                    // Asegurarse de no exceder los límites de la cuadrícula
+                    if (row < gridHeight && col < gridWidth) {
+                        grid[row][col] = { char: word.word[i], playable: true };
+                    }
                     if (word.direction === 'across') {
                         col++;
                     } else { // down
@@ -310,12 +331,12 @@
                 }
             });
             // Set CSS grid template columns
-            crosswordGridElement.style.gridTemplateColumns = `repeat(${maxCol}, 1fr)`;
+            crosswordGridElement.style.gridTemplateColumns = `repeat(${gridWidth}, 1fr)`; // Usar gridWidth
             crosswordGridElement.innerHTML = ''; // Clear existing grid
             gridCells = []; // Reset cell references
 
-            for (let r = 0; r < maxRow; r++) {
-                for (let c = 0; c < maxCol; c++) {
+            for (let r = 0; r < gridHeight; r++) { // Usar gridHeight
+                for (let c = 0; c < gridWidth; c++) { // Usar gridWidth
                     const cell = document.createElement('div');
                     cell.classList.add('grid-cell');
                     const cellData = grid[r][c];
@@ -341,8 +362,7 @@
             // Add numbers to the cells
             crosswordData.words.forEach(word => {
                 const { row, col, number } = word.start;
-                const maxCurrentCols = crosswordGridElement.style.gridTemplateColumns.split(' ').length; // Get current grid columns
-                const cellIndex = row * maxCurrentCols + col;
+                const cellIndex = row * gridWidth + col; // Usar gridWidth para calcular el índice
                 const cellElement = crosswordGridElement.children[cellIndex];
                 if (cellElement) {
                     let numberSpan = cellElement.querySelector('.number');
@@ -396,7 +416,7 @@
             });
             // Highlight cells
             let { row, col } = wordToHighlight.start;
-            const maxCols = crosswordGridElement.style.gridTemplateColumns.split(' ').length; // Get grid columns dynamically
+            const maxCols = gridWidth; // Usar la variable global gridWidth
             for (let i = 0; i < wordToHighlight.word.length; i++) {
                 const cellIndex = row * maxCols + col;
                 const cellElement = crosswordGridElement.children[cellIndex];
@@ -423,7 +443,7 @@
             input.value = input.value.toUpperCase(); // Ensure uppercase
             const row = parseInt(input.dataset.row);
             const col = parseInt(input.dataset.col);
-            const maxCols = crosswordGridElement.style.gridTemplateColumns.split(' ').length;
+            const maxCols = gridWidth; // Usar la variable global gridWidth
 
             // Move to the next cell
             let nextInput = null;
@@ -435,7 +455,7 @@
             }
 
             // Find the next playable cell
-            while (nextRow < (crosswordGridElement.children.length / maxCols)) { // Use total grid rows
+            while (nextRow < gridHeight) { // Usar la variable global gridHeight
                 const nextCellIndex = nextRow * maxCols + nextCol;
                 const nextCellElement = crosswordGridElement.children[nextCellIndex];
                 if (nextCellElement && nextCellElement.querySelector('input')) {
@@ -489,7 +509,7 @@
             const input = event.target;
             const row = parseInt(input.dataset.row);
             const col = parseInt(input.dataset.col);
-            const maxCols = crosswordGridElement.style.gridTemplateColumns.split(' ').length;
+            const maxCols = gridWidth; // Usar la variable global gridWidth
 
             let nextInput = null;
             let targetRow = row;
@@ -540,16 +560,14 @@
             }
         }
 
-
         // Function to check answers
         function checkAnswers() {
             let allCorrect = true;
             crosswordData.words.forEach(word => {
                 let { row, col } = word.start;
                 let userAnswer = '';
-                // let isWordCorrect = true; // This variable was declared but not used
 
-                const maxCols = crosswordGridElement.style.gridTemplateColumns.split(' ').length;
+                const maxCols = gridWidth; // Usar la variable global gridWidth
 
                 for (let i = 0; i < word.word.length; i++) {
                     const cellIndex = row * maxCols + col;
@@ -628,7 +646,7 @@
             document.querySelectorAll('.clues-column li').forEach(li => {
                 li.classList.remove('active');
             });
-            const maxCols = crosswordGridElement.style.gridTemplateColumns.split(' ').length; // Get grid columns dynamically
+            const maxCols = gridWidth; // Usar la variable global gridWidth
 
             crosswordData.words.forEach(word => {
                 let { row, col } = word.start;
@@ -671,3 +689,4 @@
     </script>
 </body>
 </html>
+```
