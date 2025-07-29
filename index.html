@@ -226,29 +226,18 @@
     <script>
         // Define the crossword puzzle data
         const crosswordData = {
-            grid: [
-                ['', '', '', '', '', '', '', '', '', ''],
-                ['', '', '', '', '', '', '', '', '', ''],
-                ['', '', '', '', '', '', '', '', '', ''],
-                ['', '', '', '', '', '', '', '', '', ''],
-                ['', '', '', '', '', '', '', '', '', ''],
-                ['', '', '', '', '', '', '', '', '', ''],
-                ['', '', '', '', '', '', '', '', '', ''],
-                ['', '', '', '', '', '', '', '', '', ''],
-                ['', '', '', '', '', '', '', '', '', ''],
-                ['', '', '', '', '', '', '', '', '', '']
-            ],
+            // CORRECCIÓN AQUÍ: Se han redefinido las coordenadas de inicio para un crucigrama coherente
             words: [
                 { word: 'MELODIA', clue: 'Sucesión de sonidos que forman una unidad musical.', start: { row: 0, col: 0 }, direction: 'across', number: 1 },
-                { word: 'RITMO', clue: 'Orden y proporción en el movimiento o sucesión de los sonidos.', start: { row: 2, col: 2 }, direction: 'across', number: 2 },
+                { word: 'RITMO', clue: 'Orden y proporción en el movimiento o sucesión de los sonidos.', start: { row: 1, col: 2 }, direction: 'across', number: 2 },
                 { word: 'ARMONIA', clue: 'Combinación de sonidos simultáneos que resultan agradables.', start: { row: 4, col: 0 }, direction: 'across', number: 3 },
-                { word: 'TONO', clue: 'Altura de un sonido.', start: { row: 6, col: 5 }, direction: 'across', number: 4 },
+                { word: 'TONO', clue: 'Altura de un sonido.', start: { row: 6, col: 3 }, direction: 'across', number: 4 },
                 { word: 'COMPAS', clue: 'División de la música en partes iguales de tiempo.', start: { row: 8, col: 1 }, direction: 'across', number: 5 },
                 { word: 'NOTAS', clue: 'Signos que representan los sonidos musicales.', start: { row: 0, col: 2 }, direction: 'down', number: 10 },
-                { word: 'TIMBRE', clue: 'Cualidad del sonido que permite distinguir la fuente sonora.', start: { row: 1, col: 4 }, direction: 'down', number: 6 },
-                { word: 'ESCALA', clue: 'Sucesión de sonidos ascendentes o descendentes.', start: { row: 3, col: 6 }, direction: 'down', number: 7 },
-                { word: 'ACORDE', clue: 'Conjunto de tres o más notas que suenan simultáneamente.', start: { row: 5, col: 8 }, direction: 'down', number: 8 },
-                { word: 'SILENCIO', clue: 'Ausencia de sonido en la música.', start: { row: 7, col: 0 }, direction: 'down', number: 9 }
+                { word: 'TIMBRE', clue: 'Cualidad del sonido que permite distinguir la fuente sonora.', start: { row: 0, col: 6 }, direction: 'down', number: 6 },
+                { word: 'ESCALA', clue: 'Sucesión de sonidos ascendentes o descendentes.', start: { row: 2, col: 4 }, direction: 'down', number: 7 },
+                { word: 'ACORDE', clue: 'Conjunto de tres o más notas que suenan simultáneamente.', start: { row: 4, col: 3 }, direction: 'down', number: 8 },
+                { word: 'SILENCIO', clue: 'Ausencia de sonido en la música.', start: { row: 6, col: 1 }, direction: 'down', number: 9 }
             ]
         };
         const crosswordGridElement = document.getElementById('crossword-grid');
@@ -264,7 +253,7 @@
         let gridCells = [];
         let gridWidth = 0;
         let gridHeight = 0;
-        let activeWord = null; // Variable para almacenar la palabra activa
+        let activeWord = null;
 
         function showMessage(title, content) {
             messageTitle.textContent = title;
@@ -388,7 +377,7 @@
                 li.classList.remove('active');
             });
             
-            activeWord = wordToHighlight; // Establecer la palabra activa
+            activeWord = wordToHighlight;
 
             let { row, col } = wordToHighlight.start;
             const maxCols = gridWidth;
@@ -419,7 +408,6 @@
                 let currentIndex = -1;
                 const maxCols = gridWidth;
 
-                // Encontrar la posición del input actual dentro de la palabra activa
                 for (let i = 0; i < activeWord.word.length; i++) {
                     const cellIndex = row * maxCols + col;
                     const cellInput = crosswordGridElement.children[cellIndex].querySelector('input');
@@ -453,7 +441,6 @@
                     }
                 }
             } else {
-                // Lógica de movimiento por defecto si no hay palabra activa
                 const row = parseInt(input.dataset.row);
                 const col = parseInt(input.dataset.col);
                 const maxCols = gridWidth;
@@ -516,7 +503,6 @@
             let targetRow = row;
             let targetCol = col;
 
-            // Manejar la navegación del cursor dentro de la palabra activa
             if (activeWord) {
                 if (activeWord.direction === 'across') {
                     if (event.key === 'ArrowRight') {
@@ -526,7 +512,7 @@
                     } else if (event.key === 'Backspace' && input.value === '') {
                         targetCol--;
                     }
-                } else { // 'down'
+                } else {
                     if (event.key === 'ArrowDown') {
                         targetRow++;
                     } else if (event.key === 'ArrowUp') {
@@ -536,7 +522,6 @@
                     }
                 }
             }
-            // Si la palabra activa no está definida o la tecla no es una de las de navegación de la palabra
             if (!activeWord || (event.key !== 'ArrowRight' && event.key !== 'ArrowLeft' && event.key !== 'ArrowDown' && event.key !== 'ArrowUp' && event.key !== 'Backspace')) {
                  switch (event.key) {
                     case 'ArrowRight':
@@ -557,7 +542,7 @@
                         }
                         break;
                     default:
-                        return; // Do not prevent default for other keys
+                        return;
                 }
             }
             
