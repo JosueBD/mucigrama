@@ -261,68 +261,56 @@
         const messageTitle = document.getElementById('message-title');
         const messageContent = document.getElementById('message-content');
         const messageOkButton = document.getElementById('message-ok-button');
-        let gridCells = []; // To store references to input elements
-
-        // Variables globales para las dimensiones de la cuadrícula
+        let gridCells = [];
         let gridWidth = 0;
         let gridHeight = 0;
+        let activeWord = null; // Variable para almacenar la palabra activa
 
-        // Function to display custom messages
         function showMessage(title, content) {
             messageTitle.textContent = title;
             messageContent.textContent = content;
             messageBox.style.display = 'block';
         }
 
-        // Event listener for the message box OK button
         messageOkButton.addEventListener('click', () => {
             messageBox.style.display = 'none';
         });
 
-        // Function to initialize the crossword grid
         function initializeGrid() {
-            // Determine grid dimensions dynamically based on words
             let maxRow = 0;
             let maxCol = 0;
             crosswordData.words.forEach(word => {
                 if (word.direction === 'across') {
                     maxCol = Math.max(maxCol, word.start.col + word.word.length - 1);
                     maxRow = Math.max(maxRow, word.start.row);
-                } else { // down
+                } else {
                     maxRow = Math.max(maxRow, word.start.row + word.word.length - 1);
                     maxCol = Math.max(maxCol, word.start.col);
                 }
             });
-            // Add some padding to the grid
             maxRow += 2;
             maxCol += 2;
 
-            // Almacenar las dimensiones de la cuadrícula globalmente
             gridWidth = maxCol;
             gridHeight = maxRow;
 
-            // Create an empty grid with black cells
-            // CORRECCIÓN AQUÍ: Inicializar celdas con null en lugar de ''
-            const grid = Array(gridHeight).fill(0).map(() => Array(gridWidth).fill(null)); 
-            // Place words into the grid and mark cells as playable
+            const grid = Array(gridHeight).fill(0).map(() => Array(gridWidth).fill(null));
             crosswordData.words.forEach(word => {
                 let { row, col } = word.start;
                 for (let i = 0; i < word.word.length; i++) {
-                    // Asegurarse de no exceder los límites de la cuadrícula
                     if (row < gridHeight && col < gridWidth) {
                         grid[row][col] = { char: word.word[i], playable: true };
                     }
                     if (word.direction === 'across') {
                         col++;
-                    } else { // down
+                    } else {
                         row++;
                     }
                 }
             });
-            // Set CSS grid template columns
             crosswordGridElement.style.gridTemplateColumns = `repeat(${gridWidth}, 1fr)`;
-            crosswordGridElement.innerHTML = ''; // Clear existing grid
-            gridCells = []; // Reset cell references
+            crosswordGridElement.innerHTML = '';
+            gridCells = [];
 
             for (let r = 0; r < gridHeight; r++) {
                 for (let c = 0; c < gridWidth; c++) {
@@ -330,7 +318,6 @@
                     cell.classList.add('grid-cell');
                     const cellData = grid[r][c];
 
-                    // CORRECCIÓN AQUÍ: Ahora cellData será null o un objeto, la comprobación funciona.
                     if (cellData && cellData.playable) {
                         const input = document.createElement('input');
                         input.type = 'text';
@@ -349,10 +336,9 @@
                 }
             }
 
-            // Add numbers to the cells
             crosswordData.words.forEach(word => {
                 const { row, col, number } = word.start;
-                const cellIndex = row * gridWidth + col; // Usar gridWidth para calcular el índice
+                const cellIndex = row * gridWidth + col;
                 const cellElement = crosswordGridElement.children[cellIndex];
                 if (cellElement) {
                     let numberSpan = cellElement.querySelector('.number');
@@ -368,7 +354,6 @@
             renderClues();
         }
 
-        // Function to render clues
         function renderClues() {
             acrossCluesElement.innerHTML = '';
             downCluesElement.innerHTML = '';
@@ -395,18 +380,18 @@
             });
         }
 
-        // Function to highlight a word in the grid and its clue
         function highlightWord(wordToHighlight) {
-            // Clear previous highlights
             gridCells.forEach(input => {
                 input.parentElement.classList.remove('active');
             });
             document.querySelectorAll('.clues-column li').forEach(li => {
                 li.classList.remove('active');
             });
-            // Highlight cells
+            
+            activeWord = wordToHighlight; // Establecer la palabra activa
+
             let { row, col } = wordToHighlight.start;
-            const maxCols = gridWidth; // Usar la variable global gridWidth
+            const maxCols = gridWidth;
             for (let i = 0; i < wordToHighlight.word.length; i++) {
                 const cellIndex = row * maxCols + col;
                 const cellElement = crosswordGridElement.children[cellIndex];
@@ -415,126 +400,168 @@
                 }
                 if (wordToHighlight.direction === 'across') {
                     col++;
-                } else { // down
+                } else {
                     row++;
                 }
             }
-
-            // Highlight clue
             const clueElement = document.querySelector(`.clues-column li[data-number="${wordToHighlight.number}"][data-direction="${wordToHighlight.direction}"]`);
             if (clueElement) {
                 clueElement.classList.add('active');
             }
         }
 
-        // Handle input move to next cell
         function handleInput(event) {
             const input = event.target;
-            input.value = input.value.toUpperCase(); // Ensure uppercase
-            const row = parseInt(input.dataset.row);
-            const col = parseInt(input.dataset.col);
-            const maxCols = gridWidth; // Usar la variable global gridWidth
+            input.value = input.value.toUpperCase();
+            
+            if (activeWord) {
+                let { row, col } = activeWord.start;
+                let currentIndex = -1;
+                const maxCols = gridWidth;
 
-            // Move to the next cell
-            let nextInput = null;
-            let nextCol = col + 1;
-            let nextRow = row;
-            if (nextCol >= maxCols) {
-                nextCol = 0;
-                nextRow++;
-            }
-
-            // Find the next playable cell
-            while (nextRow < gridHeight) { // Usar la variable global gridHeight
-                const nextCellIndex = nextRow * maxCols + nextCol;
-                const nextCellElement = crosswordGridElement.children[nextCellIndex];
-                if (nextCellElement && nextCellElement.querySelector('input')) {
-                    nextInput = nextCellElement.querySelector('input');
-                    break;
+                // Encontrar la posición del input actual dentro de la palabra activa
+                for (let i = 0; i < activeWord.word.length; i++) {
+                    const cellIndex = row * maxCols + col;
+                    const cellInput = crosswordGridElement.children[cellIndex].querySelector('input');
+                    if (cellInput === input) {
+                        currentIndex = i;
+                        break;
+                    }
+                    if (activeWord.direction === 'across') {
+                        col++;
+                    } else {
+                        row++;
+                    }
                 }
-                nextCol++;
+
+                if (currentIndex !== -1 && currentIndex < activeWord.word.length - 1) {
+                    let nextInput = null;
+                    let nextRow = activeWord.start.row;
+                    let nextCol = activeWord.start.col;
+
+                    if (activeWord.direction === 'across') {
+                        nextCol += currentIndex + 1;
+                    } else {
+                        nextRow += currentIndex + 1;
+                    }
+
+                    const nextCellIndex = nextRow * maxCols + nextCol;
+                    const nextCellElement = crosswordGridElement.children[nextCellIndex];
+                    if (nextCellElement && nextCellElement.querySelector('input')) {
+                        nextInput = nextCellElement.querySelector('input');
+                        nextInput.focus();
+                    }
+                }
+            } else {
+                // Lógica de movimiento por defecto si no hay palabra activa
+                const row = parseInt(input.dataset.row);
+                const col = parseInt(input.dataset.col);
+                const maxCols = gridWidth;
+                let nextCol = col + 1;
+                let nextRow = row;
                 if (nextCol >= maxCols) {
                     nextCol = 0;
                     nextRow++;
                 }
-            }
-
-            if (nextInput) {
-                nextInput.focus();
+                while (nextRow < gridHeight) {
+                    const nextCellIndex = nextRow * maxCols + nextCol;
+                    const nextCellElement = crosswordGridElement.children[nextCellIndex];
+                    if (nextCellElement && nextCellElement.querySelector('input')) {
+                        nextCellElement.querySelector('input').focus();
+                        break;
+                    }
+                    nextCol++;
+                    if (nextCol >= maxCols) {
+                        nextCol = 0;
+                        nextRow++;
+                    }
+                }
             }
         }
 
-        // Handle focus highlight relevant word(s)
         function handleFocus(event) {
             const focusedInput = event.target;
             const row = parseInt(focusedInput.dataset.row);
             const col = parseInt(focusedInput.dataset.col);
 
-            // Find words crossing this cell
             const intersectingWords = crosswordData.words.filter(word => {
                 const { row: startRow, col: startCol } = word.start;
                 if (word.direction === 'across') {
                     return row === startRow && col >= startCol && col < (startCol + word.word.length);
-                } else { // down
+                } else {
                     return col === startCol && row >= startRow && row < (startRow + word.word.length);
                 }
             });
-            // For simplicity, just highlight the first intersecting word found.
-            // A more advanced app might allow toggling between intersecting words.
+
             if (intersectingWords.length > 0) {
                 highlightWord(intersectingWords[0]);
             } else {
-                // Clear all highlights if no word is found (e.g., if focus moves to a non-word cell)
                 gridCells.forEach(input => {
                     input.parentElement.classList.remove('active');
                 });
                 document.querySelectorAll('.clues-column li').forEach(li => {
                     li.classList.remove('active');
                 });
+                activeWord = null;
             }
         }
 
-        // Handle keyboard navigation
         function handleKeyDown(event) {
             const input = event.target;
             const row = parseInt(input.dataset.row);
             const col = parseInt(input.dataset.col);
-            const maxCols = gridWidth; // Usar la variable global gridWidth
+            const maxCols = gridWidth;
 
             let nextInput = null;
             let targetRow = row;
             let targetCol = col;
 
-            switch (event.key) {
-                case 'ArrowRight':
-                    targetCol++;
-                    break;
-                case 'ArrowLeft':
-                    targetCol--;
-                    break;
-                case 'ArrowDown':
-                    targetRow++;
-                    break;
-                case 'ArrowUp':
-                    targetRow--;
-                    break;
-                case 'Backspace':
-                    if (input.value === '') {
-                        // Move back if current cell is empty
+            // Manejar la navegación del cursor dentro de la palabra activa
+            if (activeWord) {
+                if (activeWord.direction === 'across') {
+                    if (event.key === 'ArrowRight') {
+                        targetCol++;
+                    } else if (event.key === 'ArrowLeft') {
                         targetCol--;
-                        if (targetCol < 0) {
-                            targetCol = maxCols - 1;
-                            targetRow--;
-                        }
+                    } else if (event.key === 'Backspace' && input.value === '') {
+                        targetCol--;
                     }
-                    break;
-                default:
-                    return; // Do not prevent default for other keys
+                } else { // 'down'
+                    if (event.key === 'ArrowDown') {
+                        targetRow++;
+                    } else if (event.key === 'ArrowUp') {
+                        targetRow--;
+                    } else if (event.key === 'Backspace' && input.value === '') {
+                        targetRow--;
+                    }
+                }
             }
-
-            // Prevent default arrow key behavior (scrolling)
+            // Si la palabra activa no está definida o la tecla no es una de las de navegación de la palabra
+            if (!activeWord || (event.key !== 'ArrowRight' && event.key !== 'ArrowLeft' && event.key !== 'ArrowDown' && event.key !== 'ArrowUp' && event.key !== 'Backspace')) {
+                 switch (event.key) {
+                    case 'ArrowRight':
+                        targetCol++;
+                        break;
+                    case 'ArrowLeft':
+                        targetCol--;
+                        break;
+                    case 'ArrowDown':
+                        targetRow++;
+                        break;
+                    case 'ArrowUp':
+                        targetRow--;
+                        break;
+                    case 'Backspace':
+                        if (input.value === '') {
+                            targetCol--;
+                        }
+                        break;
+                    default:
+                        return; // Do not prevent default for other keys
+                }
+            }
+            
             event.preventDefault();
-            // Find the target input element
             const targetCellIndex = targetRow * maxCols + targetCol;
             const targetCellElement = crosswordGridElement.children[targetCellIndex];
             if (targetCellElement) {
@@ -543,21 +570,18 @@
 
             if (nextInput) {
                 nextInput.focus();
-                // If moving back with backspace, set cursor to end of previous cell
                 if (event.key === 'Backspace' && input.value === '') {
                     nextInput.selectionStart = nextInput.selectionEnd = nextInput.value.length;
                 }
             }
         }
 
-        // Function to check answers
         function checkAnswers() {
             let allCorrect = true;
             crosswordData.words.forEach(word => {
                 let { row, col } = word.start;
                 let userAnswer = '';
-
-                const maxCols = gridWidth; // Usar la variable global gridWidth
+                const maxCols = gridWidth;
 
                 for (let i = 0; i < word.word.length; i++) {
                     const cellIndex = row * maxCols + col;
@@ -565,16 +589,13 @@
                     if (inputElement) {
                         userAnswer += inputElement.value;
                     }
-
                     if (word.direction === 'across') {
                         col++;
-                    } else { // down
+                    } else {
                         row++;
                     }
                 }
-
                 if (userAnswer.toUpperCase() === word.word.toUpperCase()) {
-                    // Mark as correct
                     let { row: r, col: c } = word.start;
                     for (let i = 0; i < word.word.length; i++) {
                         const cellIndex = r * maxCols + c;
@@ -585,12 +606,11 @@
                         }
                         if (word.direction === 'across') {
                             c++;
-                        } else { // down
+                        } else {
                             r++;
                         }
                     }
                 } else {
-                    // Mark as incorrect
                     allCorrect = false;
                     let { row: r, col: c } = word.start;
                     for (let i = 0; i < word.word.length; i++) {
@@ -602,7 +622,7 @@
                         }
                         if (word.direction === 'across') {
                             c++;
-                        } else { // down
+                        } else {
                             r++;
                         }
                     }
@@ -615,7 +635,6 @@
             }
         }
 
-        // Function to clear the grid
         function clearGrid() {
             gridCells.forEach(input => {
                 input.value = '';
@@ -627,16 +646,15 @@
             showMessage('Crucigrama Limpiado', 'Todas las respuestas han sido borradas. ¡Puedes empezar de nuevo!');
         }
 
-        // Function to show the solution
         function showSolution() {
             gridCells.forEach(input => {
-                input.value = ''; // Clear current input
+                input.value = '';
                 input.parentElement.classList.remove('correct', 'incorrect', 'active');
             });
             document.querySelectorAll('.clues-column li').forEach(li => {
                 li.classList.remove('active');
             });
-            const maxCols = gridWidth; // Usar la variable global gridWidth
+            const maxCols = gridWidth;
 
             crosswordData.words.forEach(word => {
                 let { row, col } = word.start;
@@ -645,11 +663,11 @@
                     const inputElement = crosswordGridElement.children[cellIndex].querySelector('input');
                     if (inputElement) {
                         inputElement.value = word.word[i];
-                        inputElement.parentElement.classList.add('correct'); // Mark as correct solution
+                        inputElement.parentElement.classList.add('correct');
                     }
                     if (word.direction === 'across') {
                         col++;
-                    } else { // down
+                    } else {
                         row++;
                     }
                 }
@@ -657,14 +675,11 @@
             showMessage('Solución Mostrada', 'Aquí tienes las respuestas correctas. ¡Esperamos que hayas aprendido mucho!');
         }
 
-        // Event Listeners for buttons
         checkAnswersButton.addEventListener('click', checkAnswers);
         clearGridButton.addEventListener('click', clearGrid);
         showSolutionButton.addEventListener('click', showSolution);
 
-        // Initialize the grid when the page loads
         document.addEventListener('DOMContentLoaded', initializeGrid);
-        // ---- Nuevo código para registrar el Service Worker ----
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('./service-worker.js')
