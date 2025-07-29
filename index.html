@@ -189,7 +189,7 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div class="crossword-container flex justify-center items-center">
                 <div id="crossword-grid" class="crossword-grid">
-                    </div>
+                </div>
             </div>
 
             <div class="clues-section">
@@ -225,7 +225,6 @@
 
     <script>
         // Define the crossword puzzle data
-        // You can expand this with more words and clues for your theoretical concepts
         const crosswordData = {
             grid: [
                 ['', '', '', '', '', '', '', '', '', ''],
@@ -245,14 +244,16 @@
                 { word: 'ARMONIA', clue: 'Combinación de sonidos simultáneos que resultan agradables.', start: { row: 4, col: 0 }, direction: 'across', number: 3 },
                 { word: 'TONO', clue: 'Altura de un sonido.', start: { row: 6, col: 5 }, direction: 'across', number: 4 },
                 { word: 'COMPAS', clue: 'División de la música en partes iguales de tiempo.', start: { row: 8, col: 1 }, direction: 'across', number: 5 },
-                { word: 'NOTAS', clue: 'Signos que representan los sonidos musicales.', start: { row: 0, col: 0 }, direction: 'down', number: 1 },
+                // CORRECCIÓN AQUÍ:
+                // Se cambió la columna de inicio de 'NOTAS' a '2' para que se cruce con la 'O' de 'MELODIA'
+                // Se cambió el número de 'NOTAS' a '10' para evitar duplicidad con el número 1.
+                { word: 'NOTAS', clue: 'Signos que representan los sonidos musicales.', start: { row: 0, col: 2 }, direction: 'down', number: 10 },
                 { word: 'TIMBRE', clue: 'Cualidad del sonido que permite distinguir la fuente sonora.', start: { row: 1, col: 4 }, direction: 'down', number: 6 },
                 { word: 'ESCALA', clue: 'Sucesión de sonidos ascendentes o descendentes.', start: { row: 3, col: 6 }, direction: 'down', number: 7 },
                 { word: 'ACORDE', clue: 'Conjunto de tres o más notas que suenan simultáneamente.', start: { row: 5, col: 8 }, direction: 'down', number: 8 },
                 { word: 'SILENCIO', clue: 'Ausencia de sonido en la música.', start: { row: 7, col: 0 }, direction: 'down', number: 9 }
             ]
         };
-
         const crosswordGridElement = document.getElementById('crossword-grid');
         const acrossCluesElement = document.getElementById('across-clues');
         const downCluesElement = document.getElementById('down-clues');
@@ -263,7 +264,6 @@
         const messageTitle = document.getElementById('message-title');
         const messageContent = document.getElementById('message-content');
         const messageOkButton = document.getElementById('message-ok-button');
-
         let gridCells = []; // To store references to input elements
 
         // Function to display custom messages
@@ -277,7 +277,6 @@
         messageOkButton.addEventListener('click', () => {
             messageBox.style.display = 'none';
         });
-
         // Function to initialize the crossword grid
         function initializeGrid() {
             // Determine grid dimensions dynamically based on words
@@ -292,14 +291,12 @@
                     maxCol = Math.max(maxCol, word.start.col);
                 }
             });
-
             // Add some padding to the grid
             maxRow += 2;
             maxCol += 2;
 
             // Create an empty grid with black cells
             const grid = Array(maxRow).fill(0).map(() => Array(maxCol).fill(''));
-
             // Place words into the grid and mark cells as playable
             crosswordData.words.forEach(word => {
                 let { row, col } = word.start;
@@ -312,10 +309,8 @@
                     }
                 }
             });
-
             // Set CSS grid template columns
             crosswordGridElement.style.gridTemplateColumns = `repeat(${maxCol}, 1fr)`;
-
             crosswordGridElement.innerHTML = ''; // Clear existing grid
             gridCells = []; // Reset cell references
 
@@ -346,7 +341,8 @@
             // Add numbers to the cells
             crosswordData.words.forEach(word => {
                 const { row, col, number } = word.start;
-                const cellIndex = row * maxCol + col;
+                const maxCurrentCols = crosswordGridElement.style.gridTemplateColumns.split(' ').length; // Get current grid columns
+                const cellIndex = row * maxCurrentCols + col;
                 const cellElement = crosswordGridElement.children[cellIndex];
                 if (cellElement) {
                     let numberSpan = cellElement.querySelector('.number');
@@ -371,7 +367,6 @@
                 .sort((a, b) => a.number - b.number);
             const downClues = crosswordData.words.filter(word => word.direction === 'down')
                 .sort((a, b) => a.number - b.number);
-
             acrossClues.forEach(word => {
                 const li = document.createElement('li');
                 li.innerHTML = `<span class="font-semibold">${word.number}.</span> ${word.clue}`;
@@ -380,7 +375,6 @@
                 li.addEventListener('click', () => highlightWord(word));
                 acrossCluesElement.appendChild(li);
             });
-
             downClues.forEach(word => {
                 const li = document.createElement('li');
                 li.innerHTML = `<span class="font-semibold">${word.number}.</span> ${word.clue}`;
@@ -400,7 +394,6 @@
             document.querySelectorAll('.clues-column li').forEach(li => {
                 li.classList.remove('active');
             });
-
             // Highlight cells
             let { row, col } = wordToHighlight.start;
             const maxCols = crosswordGridElement.style.gridTemplateColumns.split(' ').length; // Get grid columns dynamically
@@ -436,7 +429,6 @@
             let nextInput = null;
             let nextCol = col + 1;
             let nextRow = row;
-
             if (nextCol >= maxCols) {
                 nextCol = 0;
                 nextRow++;
@@ -477,7 +469,6 @@
                     return col === startCol && row >= startRow && row < (startRow + word.word.length);
                 }
             });
-
             // For simplicity, just highlight the first intersecting word found.
             // A more advanced app might allow toggling between intersecting words.
             if (intersectingWords.length > 0) {
@@ -533,7 +524,6 @@
 
             // Prevent default arrow key behavior (scrolling)
             event.preventDefault();
-
             // Find the target input element
             const targetCellIndex = targetRow * maxCols + targetCol;
             const targetCellElement = crosswordGridElement.children[targetCellIndex];
@@ -610,7 +600,6 @@
                     }
                 }
             });
-
             if (allCorrect) {
                 showMessage('¡Felicidades!', '¡Has completado el crucigrama correctamente!');
             } else {
@@ -639,7 +628,6 @@
             document.querySelectorAll('.clues-column li').forEach(li => {
                 li.classList.remove('active');
             });
-
             const maxCols = crosswordGridElement.style.gridTemplateColumns.split(' ').length; // Get grid columns dynamically
 
             crosswordData.words.forEach(word => {
@@ -668,7 +656,6 @@
 
         // Initialize the grid when the page loads
         document.addEventListener('DOMContentLoaded', initializeGrid);
-
         // ---- Nuevo código para registrar el Service Worker ----
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
