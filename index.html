@@ -47,10 +47,9 @@
             color: #333;
             position: relative;
         }
-        /* ESTILO PARA CELDAS NEGRAS */
         .grid-cell.black {
-            background-color: #2d3748; /* Un gris oscuro */
-            border: 1px solid #4a5568; /* Borde más oscuro */
+            background-color: #2d3748;
+            border: 1px solid #4a5568;
         }
         .grid-cell input {
             width: 100%;
@@ -67,13 +66,13 @@
             box-sizing: border-box;
         }
         .grid-cell.active input {
-            background-color: #bfdbfe; /* Tailwind blue-200 */
+            background-color: #bfdbfe;
         }
         .grid-cell.correct input {
-            background-color: #d1fae5; /* Tailwind green-100 */
+            background-color: #d1fae5;
         }
         .grid-cell.incorrect input {
-            background-color: #fee2e2; /* Tailwind red-100 */
+            background-color: #fee2e2;
         }
         .grid-cell .number {
             position: absolute;
@@ -109,7 +108,7 @@
             border-bottom: 1px dashed #e2e8f0;
         }
         .clues-column li.active {
-            background-color: #e0f2fe; /* Tailwind blue-50 */
+            background-color: #e0f2fe;
             border-radius: 5px;
             padding-left: 10px;
             border-left: 3px solid #3b82f6;
@@ -127,7 +126,7 @@
             z-index: 1000;
             max-width: 400px;
             width: 90%;
-            display: none; /* Hidden by default */
+            display: none;
         }
         .message-box h4 {
             font-size: 1.5em;
@@ -151,7 +150,6 @@
             background-color: #2563eb;
         }
 
-        /* Responsive adjustments */
         @media (max-width: 768px) {
             .container {
                 flex-direction: column;
@@ -159,7 +157,7 @@
             }
             .crossword-grid {
                 width: 100%;
-                overflow-x: auto; /* Allow horizontal scrolling for smaller grids */
+                overflow-x: auto;
             }
             .grid-cell {
                 width: 30px;
@@ -227,21 +225,20 @@
     <script>
         // Define the crossword puzzle data
         const crosswordData = {
-            // ESTA ES LA DATA CORREGIDA Y COHERENTE
+            // ESTA ES LA DATA COMPLETAMENTE CORREGIDA Y COHERENTE
             words: [
                 // HORIZONTALES
-                { word: 'MELODIA', clue: 'Sucesión de sonidos que forman una unidad musical.', start: { row: 0, col: 0 }, direction: 'across', number: 1 },
-                { word: 'RITMO', clue: 'Orden y proporción en el movimiento o sucesión de los sonidos.', start: { row: 2, col: 1 }, direction: 'across', number: 2 },
-                { word: 'ARMONIA', clue: 'Combinación de sonidos simultáneos que resultan agradables.', start: { row: 4, col: 0 }, direction: 'across', number: 3 },
-                { word: 'TONO', clue: 'Altura de un sonido.', start: { row: 6, col: 2 }, direction: 'across', number: 4 },
-                { word: 'COMPAS', clue: 'División de la música en partes iguales de tiempo.', start: { row: 8, col: 1 }, direction: 'across', number: 5 },
+                { word: 'RITMO', clue: 'Orden y proporción en el movimiento o sucesión de los sonidos.', start: { row: 2, col: 2 }, direction: 'across', number: 2 },
+                { word: 'ARMONIA', clue: 'Combinación de sonidos simultáneos que resultan agradables.', start: { row: 12, col: 2 }, direction: 'across', number: 3 },
+                { word: 'COMPAS', clue: 'División de la música en partes iguales de tiempo.', start: { row: 13, col: 2 }, direction: 'across', number: 5 },
+                { word: 'ACORDE', clue: 'Conjunto de tres o más notas que suenan simultáneamente.', start: { row: 8, col: 4 }, direction: 'across', number: 8 },
 
                 // VERTICALES
+                { word: 'MELODIA', clue: 'Sucesión de sonidos que forman una unidad musical.', start: { row: 10, col: 0 }, direction: 'down', number: 1 },
+                { word: 'SILENCIO', clue: 'Ausencia de sonido en la música.', start: { row: 2, col: 3 }, direction: 'down', number: 9 },
+                { word: 'ESCALA', clue: 'Sucesión de sonidos ascendentes o descendentes.', start: { row: 8, col: 6 }, direction: 'down', number: 7 },
+                { word: 'TIMBRE', clue: 'Cualidad del sonido que permite distinguir la fuente sonora.', start: { row: 5, col: 8 }, direction: 'down', number: 6 },
                 { word: 'NOTAS', clue: 'Signos que representan los sonidos musicales.', start: { row: 0, col: 4 }, direction: 'down', number: 10 },
-                { word: 'TIMBRE', clue: 'Cualidad del sonido que permite distinguir la fuente sonora.', start: { row: 0, col: 6 }, direction: 'down', number: 6 },
-                { word: 'ESCALA', clue: 'Sucesión de sonidos ascendentes o descendentes.', start: { row: 3, col: 0 }, direction: 'down', number: 7 },
-                { word: 'ACORDE', clue: 'Conjunto de tres o más notas que suenan simultáneamente.', start: { row: 4, col: 3 }, direction: 'down', number: 8 },
-                { word: 'SILENCIO', clue: 'Ausencia de sonido en la música.', start: { row: 2, col: 2 }, direction: 'down', number: 9 }
             ]
         };
 
@@ -284,18 +281,17 @@
                     maxCol = Math.max(maxCol, word.start.col);
                 }
             });
-            gridWidth = maxCol + 1; // +1 porque el índice es base 0
-            gridHeight = maxRow + 1; // +1 porque el índice es base 0
+            gridWidth = maxCol + 1;
+            gridHeight = maxRow + 1;
 
             // Paso 2: Crear una matriz bidimensional para almacenar el estado de la cuadrícula (letras reales)
             const grid = Array(gridHeight).fill(0).map(() => Array(gridWidth).fill(null));
-            const playableCells = new Set(); // Para llevar un registro de qué celdas son parte de una palabra
+            const playableCells = new Set();
 
             // Paso 3: Llenar la matriz 'grid' con las letras correctas de las palabras
             crosswordData.words.forEach(word => {
                 let { row, col } = word.start;
                 for (let i = 0; i < word.word.length; i++) {
-                    // Aunque ajustamos maxRow/Col, es bueno tener esta seguridad.
                     if (row >= gridHeight) gridHeight = row + 1;
                     if (col >= gridWidth) gridWidth = col + 1;
 
@@ -305,8 +301,6 @@
                         grid[row][col] = currentChar;
                     } else if (grid[row][col] !== currentChar) {
                         console.warn(`Conflicto de letras en (${row}, ${col}). La palabra "${word.word}" intentó poner '${currentChar}', pero ya hay '${grid[row][col]}'. Revisa tu crosswordData.`);
-                        // En un entorno de producción, aquí podrías querer detener el juego o mostrar un error.
-                        // Por ahora, mantendremos la letra existente para evitar que el juego se rompa.
                     }
                     playableCells.add(`${row}-${col}`);
                     
@@ -320,8 +314,8 @@
 
             // Ajustar el tamaño del contenedor del grid para CSS Grid
             crosswordGridElement.style.gridTemplateColumns = `repeat(${gridWidth}, 1fr)`;
-            crosswordGridElement.innerHTML = ''; // Limpiar cualquier contenido anterior
-            gridCells = []; // Reiniciar la lista de inputs para el nuevo grid
+            crosswordGridElement.innerHTML = '';
+            gridCells = [];
 
             // Paso 4: Generar los elementos HTML basados en la matriz 'grid' y 'playableCells'
             for (let r = 0; r < gridHeight; r++) {
@@ -329,23 +323,20 @@
                     const cell = document.createElement('div');
                     cell.classList.add('grid-cell');
                     
-                    // Solo si la celda es jugable (parte de una palabra)
                     if (playableCells.has(`${r}-${c}`)) {
                         const input = document.createElement('input');
                         input.type = 'text';
                         input.maxLength = 1;
                         input.dataset.row = r;
                         input.dataset.col = c;
-                        // NO rellenar el input aquí con la letra. Debe estar vacío al inicio.
                         
                         input.addEventListener('input', handleInput);
                         input.addEventListener('focus', handleFocus);
                         input.addEventListener('keydown', handleKeyDown);
                         cell.appendChild(input);
-                        gridCells.push(input); // Añadir a la lista de inputs
+                        gridCells.push(input);
                     } else {
-                        // Si la celda NO es parte de ninguna palabra, es una celda negra
-                        cell.classList.add('black'); // Asegura que la clase 'black' se aplique
+                        cell.classList.add('black');
                     }
                     crosswordGridElement.appendChild(cell);
                 }
@@ -354,9 +345,6 @@
             // Paso 5: Colocar los números de las pistas
             crosswordData.words.forEach(word => {
                 const { row, col, number } = word.start;
-                // Busca la celda correcta usando el índice basado en row y col.
-                // gridWidth es el número de columnas, por lo que row * gridWidth te lleva al inicio de la fila,
-                // y + col te lleva a la columna correcta. Sumamos 1 porque querySelectorAll es 1-indexed.
                 const targetCell = crosswordGridElement.querySelector(`.grid-cell:nth-child(${row * gridWidth + col + 1})`);
                 if (targetCell) {
                     let numberSpan = targetCell.querySelector('.number');
@@ -369,7 +357,7 @@
                 }
             });
 
-            renderClues(); // Asegurarse de que las pistas se rendericen siempre
+            renderClues();
         }
 
         function renderClues() {
@@ -410,7 +398,7 @@
             activeWord = wordToHighlight;
 
             let { row, col } = wordToHighlight.start;
-            const maxCols = gridWidth; // Usar gridWidth que ya está calculado
+            const maxCols = gridWidth;
             for (let i = 0; i < wordToHighlight.word.length; i++) {
                 const cellIndex = row * maxCols + col;
                 const cellElement = crosswordGridElement.children[cellIndex];
@@ -471,20 +459,17 @@
                     }
                 }
             } else {
-                // Comportamiento de navegación por defecto si no hay palabra activa
                 const row = parseInt(input.dataset.row);
                 const col = parseInt(input.dataset.col);
                 const maxCols = gridWidth;
                 let nextCol = col + 1;
                 let nextRow = row;
                 
-                // Buscar la siguiente celda jugable
                 while (nextRow < gridHeight) {
                     if (nextCol >= maxCols) {
                         nextCol = 0;
                         nextRow++;
-                        // Si nos movemos a una nueva fila, reiniciamos col para buscar desde el inicio de esa fila
-                        if (nextRow >= gridHeight) break; // Evitar loop infinito si no hay más filas
+                        if (nextRow >= gridHeight) break;
                     }
                     const nextCellIndex = nextRow * maxCols + nextCol;
                     const nextCellElement = crosswordGridElement.children[nextCellIndex];
@@ -492,7 +477,7 @@
                         nextCellElement.querySelector('input').focus();
                         break;
                     }
-                    nextCol++; // Avanzar a la siguiente columna
+                    nextCol++;
                 }
             }
         }
@@ -502,7 +487,6 @@
             const row = parseInt(focusedInput.dataset.row);
             const col = parseInt(focusedInput.dataset.col);
 
-            // Desactivar highlighting de la palabra activa anterior
             if (activeWord) {
                 let { row: prevRow, col: prevCol } = activeWord.start;
                 const maxCols = gridWidth;
@@ -530,11 +514,8 @@
             });
 
             if (intersectingWords.length > 0) {
-                // Si la celda enfocada es parte de varias palabras, se resalta la primera encontrada.
-                // Aquí podrías añadir lógica para que el usuario elija qué palabra activar si hay múltiples.
                 highlightWord(intersectingWords[0]);
             } else {
-                // Si la celda no es parte de ninguna palabra definida (esto no debería pasar en una celda jugable)
                 gridCells.forEach(input => {
                     input.parentElement.classList.remove('active');
                 });
@@ -550,13 +531,12 @@
             const row = parseInt(input.dataset.row);
             const col = parseInt(input.dataset.col);
             const maxCols = gridWidth;
-            const maxRows = gridHeight; // Usar gridHeight
+            const maxRows = gridHeight;
 
             let nextInput = null;
             let targetRow = row;
             let targetCol = col;
 
-            // Navegación específica de la palabra activa
             if (activeWord) {
                 if (activeWord.direction === 'across') {
                     if (event.key === 'ArrowRight') {
@@ -566,7 +546,7 @@
                     } else if (event.key === 'Backspace' && input.value === '') {
                         targetCol--;
                     }
-                } else { // direction is 'down'
+                } else {
                     if (event.key === 'ArrowDown') {
                         targetRow++;
                     } else if (event.key === 'ArrowUp') {
@@ -575,8 +555,7 @@
                         targetRow--;
                     }
                 }
-            } 
-            // Navegación general si no hay palabra activa o si se usan otras flechas
+            }
             if (!activeWord || (event.key !== 'ArrowRight' && event.key !== 'ArrowLeft' && event.key !== 'ArrowDown' && event.key !== 'ArrowUp' && event.key !== 'Backspace' && event.key !== 'Delete')) {
                 switch (event.key) {
                     case 'ArrowRight':
@@ -592,27 +571,25 @@
                         targetRow--;
                         break;
                     case 'Backspace':
-                        if (input.value === '') { // Si la celda está vacía, retrocede
-                            targetCol--; // Asumiendo que se mueve horizontalmente por defecto si no hay activeWord
-                        } else { // Si tiene valor, solo borra el valor sin moverse
+                        if (input.value === '') {
+                            targetCol--;
+                        } else {
                             input.value = '';
-                            return; // No prevenir el comportamiento por defecto de backspace en este caso
+                            return;
                         }
                         break;
                     case 'Delete':
                         input.value = '';
-                        return; // No prevenir el comportamiento por defecto de delete
+                        return;
                     default:
-                        // No es una tecla de navegación o borrado que necesitemos manejar
                         return;
                 }
             }
             
-            // Asegurarse de que el target esté dentro de los límites de la cuadrícula
             targetRow = Math.max(0, Math.min(targetRow, maxRows - 1));
             targetCol = Math.max(0, Math.min(targetCol, maxCols - 1));
 
-            event.preventDefault(); // Previene el comportamiento por defecto de las flechas del navegador
+            event.preventDefault();
             
             const targetCellIndex = targetRow * maxCols + targetCol;
             const targetCellElement = crosswordGridElement.children[targetCellIndex];
@@ -623,7 +600,6 @@
 
             if (nextInput) {
                 nextInput.focus();
-                // Si retrocedemos con Backspace, el cursor debería ir al final del texto en la celda anterior
                 if (event.key === 'Backspace' && input.value === '') {
                     nextInput.selectionStart = nextInput.selectionEnd = nextInput.value.length;
                 }
@@ -638,14 +614,13 @@
                 let userAnswer = '';
                 const maxCols = gridWidth;
 
-                // Construir la respuesta del usuario para esta palabra
                 for (let i = 0; i < word.word.length; i++) {
                     const cellIndex = row * maxCols + col;
                     const inputElement = crosswordGridElement.children[cellIndex].querySelector('input');
                     if (inputElement) {
-                        userAnswer += inputElement.value.toUpperCase(); // Convertir a mayúsculas para la comparación
+                        userAnswer += inputElement.value.toUpperCase();
                     } else {
-                        userAnswer += ' '; // Si no hay input (celda negra), añade un espacio (o algo que no coincida)
+                        userAnswer += ' ';
                     }
                     if (word.direction === 'across') {
                         col++;
@@ -654,7 +629,6 @@
                     }
                 }
 
-                // Comparar y aplicar clases
                 if (userAnswer === word.word.toUpperCase()) {
                     let { row: r, col: c } = word.start;
                     for (let i = 0; i < word.word.length; i++) {
@@ -703,19 +677,19 @@
             document.querySelectorAll('.clues-column li').forEach(li => {
                 li.classList.remove('active');
             });
-            activeWord = null; // Resetea la palabra activa
+            activeWord = null;
             showMessage('Crucigrama Limpiado', 'Todas las respuestas han sido borradas. ¡Puedes empezar de nuevo!');
         }
 
         function showSolution() {
             gridCells.forEach(input => {
-                input.value = ''; // Limpia los inputs antes de mostrar la solución
-                input.parentElement.classList.remove('correct', 'incorrect', 'active'); // Remueve cualquier estado previo
+                input.value = '';
+                input.parentElement.classList.remove('correct', 'incorrect', 'active');
             });
             document.querySelectorAll('.clues-column li').forEach(li => {
                 li.classList.remove('active');
             });
-            activeWord = null; // Resetea la palabra activa
+            activeWord = null;
             
             const maxCols = gridWidth;
 
@@ -725,8 +699,8 @@
                     const cellIndex = row * maxCols + col;
                     const inputElement = crosswordGridElement.children[cellIndex].querySelector('input');
                     if (inputElement) {
-                        inputElement.value = word.word[i].toUpperCase(); // Rellena con la letra correcta en mayúsculas
-                        inputElement.parentElement.classList.add('correct'); // Opcional: marca como correctas visualmente
+                        inputElement.value = word.word[i].toUpperCase();
+                        inputElement.parentElement.classList.add('correct');
                     }
                     if (word.direction === 'across') {
                         col++;
