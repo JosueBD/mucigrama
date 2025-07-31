@@ -225,21 +225,23 @@
 
     <script>
         // Define the crossword puzzle data
-        const crosswordData = {
-            // CORRECCIÓN AQUÍ: Se han redefinido las coordenadas de inicio para un crucigrama coherente
-            words: [
-                { word: 'MELODIA', clue: 'Sucesión de sonidos que forman una unidad musical.', start: { row: 0, col: 0 }, direction: 'across', number: 1 },
-                { word: 'RITMO', clue: 'Orden y proporción en el movimiento o sucesión de los sonidos.', start: { row: 1, col: 2 }, direction: 'across', number: 2 },
-                { word: 'ARMONIA', clue: 'Combinación de sonidos simultáneos que resultan agradables.', start: { row: 4, col: 0 }, direction: 'across', number: 3 },
-                { word: 'TONO', clue: 'Altura de un sonido.', start: { row: 6, col: 3 }, direction: 'across', number: 4 },
-                { word: 'COMPAS', clue: 'División de la música en partes iguales de tiempo.', start: { row: 8, col: 1 }, direction: 'across', number: 5 },
-                { word: 'NOTAS', clue: 'Signos que representan los sonidos musicales.', start: { row: 0, col: 2 }, direction: 'down', number: 10 },
-                { word: 'TIMBRE', clue: 'Cualidad del sonido que permite distinguir la fuente sonora.', start: { row: 0, col: 6 }, direction: 'down', number: 6 },
-                { word: 'ESCALA', clue: 'Sucesión de sonidos ascendentes o descendentes.', start: { row: 2, col: 4 }, direction: 'down', number: 7 },
-                { word: 'ACORDE', clue: 'Conjunto de tres o más notas que suenan simultáneamente.', start: { row: 4, col: 3 }, direction: 'down', number: 8 },
-                { word: 'SILENCIO', clue: 'Ausencia de sonido en la música.', start: { row: 6, col: 1 }, direction: 'down', number: 9 }
-            ]
-        };
+       const crosswordData = {
+    words: [
+        // HORIZONTALES
+        { word: 'MELODIA', clue: 'Sucesión de sonidos que forman una unidad musical.', start: { row: 0, col: 0 }, direction: 'across', number: 1 },
+        { word: 'RITMO', clue: 'Orden y proporción en el movimiento o sucesión de los sonidos.', start: { row: 2, col: 1 }, direction: 'across', number: 2 }, // Ajustada para cruzar con 'TIMBRE' y 'NOTAS'
+        { word: 'ARMONIA', clue: 'Combinación de sonidos simultáneos que resultan agradables.', start: { row: 4, col: 0 }, direction: 'across', number: 3 },
+        { word: 'TONO', clue: 'Altura de un sonido.', start: { row: 6, col: 2 }, direction: 'across', number: 4 }, // Ajustada para cruzar con 'SILENCIO'
+        { word: 'COMPAS', clue: 'División de la música en partes iguales de tiempo.', start: { row: 8, col: 1 }, direction: 'across', number: 5 },
+
+        // VERTICALES
+        { word: 'NOTAS', clue: 'Signos que representan los sonidos musicales.', start: { row: 0, col: 4 }, direction: 'down', number: 10 }, // Ajustada para cruzar con 'MELODIA' y 'RITMO'
+        { word: 'TIMBRE', clue: 'Cualidad del sonido que permite distinguir la fuente sonora.', start: { row: 0, col: 6 }, direction: 'down', number: 6 }, // Se mantiene, ahora cruza con 'MELODIA'
+        { word: 'ESCALA', clue: 'Sucesión de sonidos ascendentes o descendentes.', start: { row: 3, col: 0 }, direction: 'down', number: 7 }, // Nueva posición para cruzar con 'ARMONIA'
+        { word: 'ACORDE', clue: 'Conjunto de tres o más notas que suenan simultáneamente.', start: { row: 4, col: 3 }, direction: 'down', number: 8 }, // Ajustada para cruzar con 'ARMONIA' y 'TONO'
+        { word: 'SILENCIO', clue: 'Ausencia de sonido en la música.', start: { row: 2, col: 2 }, direction: 'down', number: 9 } // Ajustada para cruzar con 'RITMO' y 'TONO'
+    ]
+};
         const crosswordGridElement = document.getElementById('crossword-grid');
         const acrossCluesElement = document.getElementById('across-clues');
         const downCluesElement = document.getElementById('down-clues');
