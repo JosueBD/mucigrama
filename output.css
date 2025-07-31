@@ -129,9 +129,7 @@
         }
     }
 }
-
-/* LA CLASE BLACK AÑADIDA AQUÍ EN OUTPUT.CSS */
 .grid-cell.black {
-    background-color: #2d3748; /* Un gris oscuro, coherente con tus estilos de Tailwind */
-    border: 1px solid #4a5568; /* Borde más oscuro */
+    background-color: #2d3748;
+    border: 1px solid #4a5568;
 }
