@@ -275,45 +275,35 @@
             crosswordData.words.forEach(word => {
                 if (word.direction === 'across') {
                     maxCol = Math.max(maxCol, word.start.col + word.word.length - 1);
-                    maxRow = Math.max(maxRow, word.start.row); // Asegura que la fila inicial esté cubierta
+                    maxRow = Math.max(maxRow, word.start.row);
                 } else {
                     maxRow = Math.max(maxRow, word.start.row + word.word.length - 1);
-                    maxCol = Math.max(maxCol, word.start.col); // Asegura que la columna inicial esté cubierta
+                    maxCol = Math.max(maxCol, word.start.col);
                 }
             });
-            // Añadir un margen para asegurar que todas las palabras se muestren y haya espacio alrededor
-            gridWidth = maxCol + 1; // +1 porque el índice es base 0
-            gridHeight = maxRow + 1; // +1 porque el índice es base 0
+            gridWidth = maxCol + 1;
+            gridHeight = maxRow + 1;
 
-            // A veces es útil añadir un margen fijo si las palabras están muy cerca del borde
-            // gridWidth += 2;
-            // gridHeight += 2;
-
-
-            // Paso 2: Crear una matriz bidimensional para almacenar el estado de la cuadrícula
-            // 'null' significa celda vacía/negra. Las letras se almacenarán directamente.
+            // Paso 2: Crear una matriz bidimensional para almacenar el estado de la cuadrícula (letras reales)
             const grid = Array(gridHeight).fill(0).map(() => Array(gridWidth).fill(null));
             const playableCells = new Set(); // Para llevar un registro de qué celdas son parte de una palabra
 
-            // Paso 3: Llenar la matriz con las letras de las palabras y marcar las celdas jugables
+            // Paso 3: Llenar la matriz 'grid' con las letras correctas de las palabras
             crosswordData.words.forEach(word => {
                 let { row, col } = word.start;
                 for (let i = 0; i < word.word.length; i++) {
-                    // Si estamos fuera de los límites calculados, ajustamos el tamaño de la cuadrícula
-                    // (Esto es una medida de seguridad, idealmente gridWidth/Height ya deberían ser suficientes)
+                    // Aunque ajustamos maxRow/Col, es bueno tener esta seguridad.
                     if (row >= gridHeight) gridHeight = row + 1;
                     if (col >= gridWidth) gridWidth = col + 1;
 
-                    // Marca la celda como jugable y almacena la letra
-                    // Si ya hay una letra, la verificamos para consistencia
+                    const currentChar = word.word[i].toUpperCase();
+
                     if (grid[row][col] === null) {
-                        grid[row][col] = word.word[i].toUpperCase();
-                    } else if (grid[row][col] !== word.word[i].toUpperCase()) {
-                        console.warn(`Conflicto de letras en (${row}, ${col}). La palabra "${word.word}" intentó poner '${word.word[i].toUpperCase()}', pero ya hay '${grid[row][col]}'. Revisa tu crosswordData.`);
-                        // En un entorno de producción, aquí podrías querer detener el juego o mostrar un error.
-                        // Por ahora, mantendremos la letra existente para evitar que el juego se rompa.
+                        grid[row][col] = currentChar;
+                    } else if (grid[row][col] !== currentChar) {
+                        console.warn(`Conflicto de letras en (${row}, ${col}). La palabra "${word.word}" intentó poner '${currentChar}', pero ya hay '${grid[row][col]}'. Revisa tu crosswordData.`);
                     }
-                    playableCells.add(`${row}-${col}`); // Usa un formato string para el Set
+                    playableCells.add(`${row}-${col}`);
                     
                     if (word.direction === 'across') {
                         col++;
@@ -323,10 +313,10 @@
                 }
             });
 
-            // Ajustar el tamaño final del grid si alguna palabra excedió el cálculo inicial
+            // Ajustar el tamaño del contenedor del grid para CSS Grid
             crosswordGridElement.style.gridTemplateColumns = `repeat(${gridWidth}, 1fr)`;
-            crosswordGridElement.innerHTML = '';
-            gridCells = []; // Reiniciar la lista de inputs
+            crosswordGridElement.innerHTML = ''; // Limpiar cualquier contenido anterior
+            gridCells = []; // Reiniciar la lista de inputs para el nuevo grid
 
             // Paso 4: Generar los elementos HTML basados en la matriz 'grid' y 'playableCells'
             for (let r = 0; r < gridHeight; r++) {
@@ -334,20 +324,24 @@
                     const cell = document.createElement('div');
                     cell.classList.add('grid-cell');
                     
+                    // Solo si la celda es jugable (parte de una palabra)
                     if (playableCells.has(`${r}-${c}`)) {
                         const input = document.createElement('input');
                         input.type = 'text';
                         input.maxLength = 1;
                         input.dataset.row = r;
                         input.dataset.col = c;
+                        // !!! IMPORTANTE: NO rellenar el input aquí con la letra. Debe estar vacío al inicio.
+                        // input.value = grid[r][c]; // <-- Si tienes algo así, BÓRRALO o coméntalo.
+                        
                         input.addEventListener('input', handleInput);
                         input.addEventListener('focus', handleFocus);
                         input.addEventListener('keydown', handleKeyDown);
                         cell.appendChild(input);
                         gridCells.push(input); // Añadir a la lista de inputs
                     } else {
-                        // Si la celda no es parte de ninguna palabra, es una celda negra
-                        cell.classList.add('black');
+                        // Si la celda NO es parte de ninguna palabra, es una celda negra
+                        cell.classList.add('black'); // Asegura que la clase 'black' se aplique
                     }
                     crosswordGridElement.appendChild(cell);
                 }
@@ -356,14 +350,14 @@
             // Paso 5: Colocar los números de las pistas
             crosswordData.words.forEach(word => {
                 const { row, col, number } = word.start;
-                const cellIndex = row * gridWidth + col; // Calcular el índice lineal en la cuadrícula HTML
-                const cellElement = crosswordGridElement.children[cellIndex];
-                if (cellElement) {
-                    let numberSpan = cellElement.querySelector('.number');
+                // No necesitamos el 'cellIndex' si seleccionamos por dataset o directo
+                const targetCell = crosswordGridElement.querySelector(`.grid-cell:nth-child(${row * gridWidth + col + 1})`);
+                if (targetCell) {
+                    let numberSpan = targetCell.querySelector('.number');
                     if (!numberSpan) {
                         numberSpan = document.createElement('span');
                         numberSpan.classList.add('number');
-                        cellElement.insertBefore(numberSpan, cellElement.firstChild);
+                        targetCell.insertBefore(numberSpan, targetCell.firstChild);
                     }
                     numberSpan.textContent = number;
                 }
