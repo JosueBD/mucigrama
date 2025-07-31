@@ -1,131 +1,137 @@
 /*! tailwindcss v4.1.11 | MIT License | https://tailwindcss.com */
 @layer properties;
 .container {
-  width: 100%;
+    width: 100%;
 }
 .block {
-  display: block;
+    display: block;
 }
 .flex {
-  display: flex;
+    display: flex;
 }
 .grid {
-  display: grid;
+    display: grid;
 }
 .min-h-screen {
-  min-height: 100vh;
+    min-height: 100vh;
 }
 .transform {
-  transform: var(--tw-rotate-x,) var(--tw-rotate-y,) var(--tw-rotate-z,) var(--tw-skew-x,) var(--tw-skew-y,);
+    transform: var(--tw-rotate-x,) var(--tw-rotate-y,) var(--tw-rotate-z,) var(--tw-skew-x,) var(--tw-skew-y,);
 }
 .grid-cols-1 {
-  grid-template-columns: repeat(1, minmax(0, 1fr));
+    grid-template-columns: repeat(1, minmax(0, 1fr));
 }
 .flex-wrap {
-  flex-wrap: wrap;
+    flex-wrap: wrap;
 }
 .items-center {
-  align-items: center;
+    align-items: center;
 }
 .justify-center {
-  justify-content: center;
+    justify-content: center;
 }
 .border {
-  border-style: var(--tw-border-style);
-  border-width: 1px;
+    border-style: var(--tw-border-style);
+    border-width: 1px;
 }
 .text-center {
-  text-align: center;
+    text-align: center;
 }
 .uppercase {
-  text-transform: uppercase;
+    text-transform: uppercase;
 }
 .outline {
-  outline-style: var(--tw-outline-style);
-  outline-width: 1px;
+    outline-style: var(--tw-outline-style);
+    outline-width: 1px;
 }
 .transition {
-  transition-property: color, background-color, border-color, outline-color, text-decoration-color, fill, stroke, --tw-gradient-from, --tw-gradient-via, --tw-gradient-to, opacity, box-shadow, transform, translate, scale, rotate, filter, -webkit-backdrop-filter, backdrop-filter, display, visibility, content-visibility, overlay, pointer-events;
-  transition-timing-function: var(--tw-ease, ease);
-  transition-duration: var(--tw-duration, 0s);
+    transition-property: color, background-color, border-color, outline-color, text-decoration-color, fill, stroke, --tw-gradient-from, --tw-gradient-via, --tw-gradient-to, opacity, box-shadow, transform, translate, scale, rotate, filter, -webkit-backdrop-filter, backdrop-filter, display, visibility, content-visibility, overlay, pointer-events;
+    transition-timing-function: var(--tw-ease, ease);
+    transition-duration: var(--tw-duration, 0s);
 }
 .duration-300 {
-  --tw-duration: 300ms;
-  transition-duration: 300ms;
+    --tw-duration: 300ms;
+    transition-duration: 300ms;
 }
 .hover\:scale-105 {
-  &:hover {
-    @media (hover: hover) {
-      --tw-scale-x: 105%;
-      --tw-scale-y: 105%;
-      --tw-scale-z: 105%;
-      scale: var(--tw-scale-x) var(--tw-scale-y);
+    &:hover {
+        @media (hover: hover) {
+            --tw-scale-x: 105%;
+            --tw-scale-y: 105%;
+            --tw-scale-z: 105%;
+            scale: var(--tw-scale-x) var(--tw-scale-y);
+        }
     }
-  }
 }
 @property --tw-rotate-x {
-  syntax: "*";
-  inherits: false;
+    syntax: "*";
+    inherits: false;
 }
 @property --tw-rotate-y {
-  syntax: "*";
-  inherits: false;
+    syntax: "*";
+    inherits: false;
 }
 @property --tw-rotate-z {
-  syntax: "*";
-  inherits: false;
+    syntax: "*";
+    inherits: false;
 }
 @property --tw-skew-x {
-  syntax: "*";
-  inherits: false;
+    syntax: "*";
+    inherits: false;
 }
 @property --tw-skew-y {
-  syntax: "*";
-  inherits: false;
+    syntax: "*";
+    inherits: false;
 }
 @property --tw-border-style {
-  syntax: "*";
-  inherits: false;
-  initial-value: solid;
+    syntax: "*";
+    inherits: false;
+    initial-value: solid;
 }
 @property --tw-outline-style {
-  syntax: "*";
-  inherits: false;
-  initial-value: solid;
+    syntax: "*";
+    inherits: false;
+    initial-value: solid;
 }
 @property --tw-duration {
-  syntax: "*";
-  inherits: false;
+    syntax: "*";
+    inherits: false;
 }
 @property --tw-scale-x {
-  syntax: "*";
-  inherits: false;
-  initial-value: 1;
+    syntax: "*";
+    inherits: false;
+    initial-value: 1;
 }
 @property --tw-scale-y {
-  syntax: "*";
-  inherits: false;
-  initial-value: 1;
+    syntax: "*";
+    inherits: false;
+    initial-value: 1;
 }
 @property --tw-scale-z {
-  syntax: "*";
-  inherits: false;
-  initial-value: 1;
+    syntax: "*";
+    inherits: false;
+    initial-value: 1;
 }
 @layer properties {
-  @supports ((-webkit-hyphens: none) and (not (margin-trim: inline))) or ((-moz-orient: inline) and (not (color:rgb(from red r g b)))) {
-    *, ::before, ::after, ::backdrop {
-      --tw-rotate-x: initial;
-      --tw-rotate-y: initial;
-      --tw-rotate-z: initial;
-      --tw-skew-x: initial;
-      --tw-skew-y: initial;
-      --tw-border-style: solid;
-      --tw-outline-style: solid;
-      --tw-duration: initial;
-      --tw-scale-x: 1;
-      --tw-scale-y: 1;
-      --tw-scale-z: 1;
+    @supports ((-webkit-hyphens: none) and (not (margin-trim: inline))) or ((-moz-orient: inline) and (not (color:rgb(from red r g b)))) {
+        *, ::before, ::after, ::backdrop {
+            --tw-rotate-x: initial;
+            --tw-rotate-y: initial;
+            --tw-rotate-z: initial;
+            --tw-skew-x: initial;
+            --tw-skew-y: initial;
+            --tw-border-style: solid;
+            --tw-outline-style: solid;
+            --tw-duration: initial;
+            --tw-scale-x: 1;
+            --tw-scale-y: 1;
+            --tw-scale-z: 1;
+        }
     }
-  }
+}
+
+/* LA CLASE BLACK AÑADIDA AQUÍ EN OUTPUT.CSS */
+.grid-cell.black {
+    background-color: #2d3748; /* Un gris oscuro, coherente con tus estilos de Tailwind */
+    border: 1px solid #4a5568; /* Borde más oscuro */
 }
