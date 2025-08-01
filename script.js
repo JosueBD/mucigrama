@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const gridLayout = [
         "....10.",
         "....S..",
-        ".2RITMO",
+        ".2RITMO.",
         "9SILENCIO",
         "....A..",
         "....6TIMBRE",
@@ -54,8 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const cell = document.createElement('div');
             cell.classList.add('grid-cell');
-            cell.style.height = cell.style.width; // Mantener celdas cuadradas
-            
+
             const char = gridLayout[r][c];
             if (char === '#') {
                 cell.classList.add('black');
@@ -66,8 +65,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 cellData.input = input;
                 cell.appendChild(input);
 
-                const number = parseInt(gridLayout[r].substring(c).match(/^\d+/));
-                if (number) {
+                // Número de pista
+                const match = gridLayout[r].substring(c).match(/^\d+/);
+                if (match) {
+                    const number = parseInt(match[0]);
                     const numberEl = document.createElement('div');
                     numberEl.classList.add('clue-number');
                     numberEl.textContent = number;
@@ -79,18 +80,34 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // 4. LÓGICA DE FUNCIONAMIENTO
+    // 4. PINTAR LISTA DE PISTAS
+    wordsData.forEach(word => {
+        if ([2, 8, 3, 5].includes(word.num)) {
+            // Horizontales
+            const li = document.createElement('li');
+            li.textContent = `${word.num}. ${word.clue}`;
+            acrossCluesEl.appendChild(li);
+        } else {
+            // Verticales
+            const li = document.createElement('li');
+            li.textContent = `${word.num}. ${word.clue}`;
+            downCluesEl.appendChild(li);
+        }
+    });
+
+    // 5. EVENTOS DE LOS BOTONES
     document.getElementById('check-button').addEventListener('click', checkAnswers);
     document.getElementById('solve-button').addEventListener('click', showSolution);
     document.getElementById('clear-button').addEventListener('click', clearGrid);
 
+    // 6. FUNCIONES
     function checkAnswers() {
         grid.flat().forEach(cell => {
             if (!cell.input) return;
             const r = cell.row;
             const c = cell.col;
             const expectedChar = gridLayout[r][c].match(/[a-zA-Z]/) ? gridLayout[r][c].toUpperCase() : null;
-            
+
             cell.el.classList.remove('correct', 'incorrect');
 
             if (cell.input.value && expectedChar) {
@@ -109,7 +126,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const r = cell.row;
             const c = cell.col;
             const expectedChar = gridLayout[r][c].match(/[a-zA-Z]/) ? gridLayout[r][c].toUpperCase() : null;
-            if(expectedChar) {
+            if (expectedChar) {
                 cell.input.value = expectedChar;
                 cell.el.classList.remove('incorrect');
                 cell.el.classList.add('correct');
