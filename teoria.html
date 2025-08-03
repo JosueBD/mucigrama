@@ -19,40 +19,57 @@
         <article>
             <h1 class="text-4xl font-bold text-gray-800 mb-4">Lección 1: Las Notas y el Pentagrama</h1>
             <p class="text-lg text-gray-600 mb-8">Vamos a empezar por el principio: cómo leemos y escribimos la música.</p>
-
             <div class="border-t pt-6">
                 <h2 class="text-3xl font-semibold text-gray-800 mb-3">El Pentagrama</h2>
-                <p class="text-gray-700 mb-4">
-                    La música se escribe en un conjunto de cinco líneas y cuatro espacios llamado <strong>pentagrama</strong>. Cada línea y cada espacio representa una nota musical diferente. Las contamos de abajo hacia arriba.
-                </p>
-                <img src="icons/pentagrama.png" alt="Un pentagrama con la clave de sol." class="mx-auto rounded-md border my-4 bg-white w-full max-w-md">
+                <p class="text-gray-700 mb-4">La música se escribe en un conjunto de cinco líneas y cuatro espacios llamado <strong>pentagrama</strong>...</p>
+                <img src="icons
+/pentagrama.png" alt="Un pentagrama con la clave de sol." class="mx-auto rounded-md border my-4 bg-white w-full max-w-md">
             </div>
-
             <div class="border-t pt-6 mt-8">
                 <h2 class="text-3xl font-semibold text-gray-800 mb-3">La Clave de Sol</h2>
-                <p class="text-gray-700 mb-4">
-                    Para saber qué nota corresponde a cada línea o espacio, usamos una <strong>clave</strong> al principio del pentagrama. La más común es la <strong>Clave de Sol</strong>. Su "barriga" se enrosca en la segunda línea, indicando que esa línea corresponde a la nota SOL.
-                </p>
-                <img src="icons/clave-de-sol.png" alt="Clave de Sol en la segunda línea del pentagrama." class="mx-auto rounded-md border my-4 h-40">
+                <p class="text-gray-700 mb-4">Para saber qué nota corresponde a cada línea o espacio, usamos una <strong>clave</strong>...</p>
+                <img src="icons
+/clave-de-sol.png" alt="Clave de Sol en la segunda línea del pentagrama." class="mx-auto rounded-md border my-4 h-40">
             </div>
-
             <div class="border-t pt-6 mt-8">
                 <h2 class="text-3xl font-semibold text-gray-800 mb-3">Las Notas en la Clave de Sol</h2>
-                <p class="text-gray-700 mb-4">
-                    A partir de la posición de SOL, podemos ubicar el resto de las notas (Do, Re, Mi, Fa, Sol, La, Si). Siguen un orden ascendente en el pentagrama.
-                </p>
-                
-                <p class="text-gray-700 mt-6"><strong>Notas en las líneas (de abajo hacia arriba): Mi, Sol, Si, Re, Fa.</strong></p>
-                <img src="icons/notas1.png" alt="Notas en las líneas del pentagrama: Mi, Sol, Si, Re, Fa." class="mx-auto rounded-md my-4 bg-white w-full max-w-lg">
-
-                <p class="text-gray-700 mt-6"><strong>Notas en los espacios (de abajo hacia arriba): Fa, La, Do, Mi.</strong></p>
-                <img src="icons/notas2.png" alt="Notas en los espacios del pentagrama: Fa, La, Do, Mi." class="mx-auto rounded-md my-4 bg-white w-full max-w-lg">
-                
-                <p class="text-gray-700 mt-6">
-                    Cuando nos quedamos sin espacio en el pentagrama, usamos <strong>líneas adicionales</strong> por encima o por debajo para seguir escribiendo notas más agudas o más graves.
-                </p>
+                <p class="text-gray-700 mb-4">A partir de la posición de SOL, podemos ubicar el resto de las notas...</p>
+                <p class="text-gray-700 mt-6"><strong>Notas en las líneas...</strong></p>
+                <img src="icons
+/notas1.png" alt="Notas en las líneas del pentagrama..." class="mx-auto rounded-md my-4 bg-white w-full max-w-lg">
+                <p class="text-gray-700 mt-6"><strong>Notas en los espacios...</strong></p>
+                <img src="icons
+/notas2.png" alt="Notas en los espacios del pentagrama..." class="mx-auto rounded-md my-4 bg-white w-full max-w-lg">
+                <p class="text-gray-700 mt-6">Cuando nos quedamos sin espacio en el pentagrama, usamos <strong>líneas adicionales</strong>...</p>
             </div>
         </article>
+        
+        <section class="border-t-4 border-blue-500 pt-6 mt-12 text-center">
+            <h2 class="text-3xl font-bold text-gray-800 mb-4">¡A Practicar!</h2>
+            <p class="text-gray-600 mb-6">Observa la primera nota de la imagen y haz clic en la respuesta correcta.</p>
+            
+            <div class="bg-gray-200 p-4 rounded-lg inline-block">
+                <img id="imagen-nota" src="" alt="Nota en el pentagrama" class="h-40 mx-auto">
+            </div>
+
+            <div class="mt-6 flex justify-center gap-2 flex-wrap">
+                <button class="boton-respuesta bg-blue-500 text-white font-bold py-2 px-4 rounded hover:bg-blue-700">DO</button>
+                <button class="boton-respuesta bg-blue-500 text-white font-bold py-2 px-4 rounded hover:bg-blue-700">RE</button>
+                <button class="boton-respuesta bg-blue-500 text-white font-bold py-2 px-4 rounded hover:bg-blue-700">MI</button>
+                <button class="boton-respuesta bg-blue-500 text-white font-bold py-2 px-4 rounded hover:bg-blue-700">FA</button>
+                <button class="boton-respuesta bg-blue-500 text-white font-bold py-2 px-4 rounded hover:bg-blue-700">SOL</button>
+                <button class="boton-respuesta bg-blue-500 text-white font-bold py-2 px-4 rounded hover:bg-blue-700">LA</button>
+                <button class="boton-respuesta bg-blue-500 text-white font-bold py-2 px-4 rounded hover:bg-blue-700">SI</button>
+            </div>
+
+            <p id="mensaje-feedback" class="mt-4 text-2xl font-bold h-8"></p>
+
+            <button id="boton-siguiente" class="mt-4 bg-green-500 text-white font-bold py-2 px-6 rounded hover:bg-green-700" style="display: none;">Siguiente</button>
+
+        </section>
     </main>
+
+    <script src="js/teoria.js"></script>
+
 </body>
 </html>
