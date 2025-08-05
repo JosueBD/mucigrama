@@ -12,9 +12,13 @@ document.addEventListener('DOMContentLoaded', () => {
     // Aquí guardamos nuestras preguntas. Cada una tiene una imagen y su respuesta correcta.
     // Por ahora, usamos las imágenes que ya tienes. ¡Más adelante puedes crear una imagen para cada nota!
     const preguntas = [
-        { imagen: 'img/notas1.png', respuesta: 'MI' }, // La primera nota de esta imagen es MI
-        { imagen: 'img/notas2.png', respuesta: 'FA' }, // La primera nota de esta imagen es FA
-        { imagen: 'img/clave-de-sol.png', respuesta: 'SOL' } // La clave se centra en la nota SOL
+        { imagen: 'icons/notas1.png', respuesta: 'DO' }, // La primera nota de esta imagen es DO
+        { imagen: 'icons/notas1.png', respuesta: 'RE' }, // La primera nota de esta imagen es RE
+        { imagen: 'icons/notas1.png', respuesta: 'LA' }, // La primera nota de esta imagen es LA
+        { imagen: 'icons/notas1.png', respuesta: 'FA' }, // La primera nota de esta imagen es FA
+        { imagen: 'icons/notas1.png', respuesta: 'MI' }, // La primera nota de esta imagen es MI
+        { imagen: 'icons/notas1.png', respuesta: 'SOL' }, // La primera nota de esta imagen es SOL
+        { imagen: 'icons/notas1.png', respuesta: 'SI' }, // La primera nota de esta imagen es SI
     ];
 
     let preguntaActual = 0; // Para saber en qué pregunta estamos.
