@@ -1,129 +1,53 @@
-// Esperar a que toda la página HTML se cargue para empezar
-document.addEventListener('DOMContentLoaded', () => {
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Armonía - Academia</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="bg-gray-100">
+    <nav class="main-nav">
+        <a href="index.html" class="nav-item">Inicio</a>
+        <a href="teoria.html" class="nav-item">Teoría</a>
+        <a href="armonia.html" class="nav-item active">Armonía</a>
+        <a href="juegos.html" class="nav-item">Juegos</a>
+    </nav>
 
-    // --- MOTOR DE AUDIO Y FRECUENCIAS ---
-    // Creamos el motor de audio UNA SOLA VEZ al inicio.
-    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-    // Mapa de frecuencias (notas a Hertz).
-    const frecuencias = {
-        'DO': 261.63, 'DO#': 277.18, 'RE': 293.66, 'RE#': 311.13, 'MI': 329.63, 'FA': 349.23,
-        'FA#': 369.99, 'SOL': 392.00, 'SOL#': 415.30, 'LA': 440.00, 'LA#': 466.16, 'SI': 493.88
-    };
+    <main class="container mx-auto p-8 bg-white rounded-lg shadow-md my-8">
+        <article>
+            <h1 class="text-4xl font-bold text-gray-800 mb-4">Lección 1: Formación de Acordes (Triadas)</h1>
+            <p class="text-lg text-gray-600 mb-8">Si las notas son las letras, los acordes son las palabras. ¡Vamos a aprender a formarlos!</p>
+            <div class="border-t pt-6">
+                <h2 class="text-3xl font-semibold text-gray-800 mb-3">¿Qué es un Acorde?</h2>
+                <p class="text-gray-700 mb-4">Un acorde es un conjunto de tres o más notas que suenan al mismo tiempo. La forma más básica de construir un acorde es "apilando" notas en intervalos de tercera. El acorde más fundamental se llama <strong>triada</strong>, porque tiene tres notas.</p>
+            </div>
+            <div class="border-t pt-6 mt-8">
+                <h2 class="text-3xl font-semibold text-gray-800 mb-3">La Triada Mayor</h2>
+                <p class="text-gray-700 mb-4">Un acorde mayor suena brillante y feliz. Se forma con una nota fundamental (la que le da el nombre al acorde), su <strong>tercera mayor</strong> y su <strong>quinta justa</strong>.</p>
+                <img src="icons/acorde_mayor.png" alt="Un teclado mostrando el acorde de Do Mayor" class="mx-auto rounded-md border my-4 bg-white w-full max-w-md">
+            </div>
+            <div class="border-t pt-6 mt-8">
+                <h2 class="text-3xl font-semibold text-gray-800 mb-3">La Triada Menor</h2>
+                <p class="text-gray-700 mb-4">Un acorde menor suele sonar más melancólico o triste. La única diferencia con el acorde mayor es que su tercera es menor.</p>
+                <img src="icons/acorde_menor.png" alt="Un teclado mostrando el acorde de Do menor" class="mx-auto rounded-md border my-4 bg-white w-full max-w-md">
+            </div>
+        </article>
 
-    // --- ELEMENTOS DEL HTML ---
-    const textoPregunta = document.getElementById('pregunta-acorde');
-    const contenedorOpciones = document.getElementById('opciones-notas');
-    const botonVerificar = document.getElementById('boton-verificar');
-    const mensajeFeedback = document.getElementById('mensaje-feedback-armonia');
-    const botonSiguiente = document.getElementById('boton-siguiente-armonia');
+        <section id="ejercicio-armonia" class="border-t-4 border-green-600 pt-6 mt-12 text-center">
+            <h2 class="text-3xl font-bold text-gray-800 mb-4">¡A Construir Acordes!</h2>
+            <p id="pregunta-acorde" class="text-xl text-gray-700 mb-6">Cargando pregunta...</p>
+            <div id="opciones-notas" class="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-12 gap-4 max-w-2xl mx-auto p-4 bg-gray-100 rounded-lg">
+                </div>
+            <div class="mt-6">
+                <button id="boton-verificar" class="bg-blue-500 text-white font-bold py-2 px-6 rounded hover:bg-blue-700">Verificar</button>
+            </div>
+            <p id="mensaje-feedback-armonia" class="mt-4 text-2xl font-bold h-8"></p>
+            <button id="boton-siguiente-armonia" class="mt-4 bg-green-500 text-white font-bold py-2 px-6 rounded hover:bg-green-700" style="display: none;">Siguiente Acorde</button>
+        </section>
+    </main>
 
-    // --- BANCO DE PREGUNTAS ---
-    const preguntas = [
-        { tonica: 'DO', tipo: 'Mayor', solucion: ['DO', 'MI', 'SOL'] },
-        { tonica: 'SOL', tipo: 'Mayor', solucion: ['SOL', 'SI', 'RE'] },
-        { tonica: 'FA', tipo: 'Mayor', solucion: ['FA', 'LA', 'DO'] },
-        { tonica: 'RE', tipo: 'menor', solucion: ['RE', 'FA', 'LA'] },
-        { tonica: 'LA', tipo: 'menor', solucion: ['LA', 'DO', 'MI'] },
-        { tonica: 'MI', tipo: 'menor', solucion: ['MI', 'SOL', 'SI'] }
-    ];
-
-    let preguntaActual = 0;
-    const todasLasNotas = ['DO', 'DO#', 'RE', 'RE#', 'MI', 'FA', 'FA#', 'SOL', 'SOL#', 'LA', 'LA#', 'SI'];
-    
-    // --- FUNCIÓN DE AUDIO (MODIFICADA) ---
-    // La función ahora usa el motor de audio que ya existe.
-    function reproducirAcorde(notasDelAcorde) {
-        if (!audioContext) return;
-        const tiempoDeDuracion = 1;
-
-        notasDelAcorde.forEach(nombreNota => {
-            const frecuencia = frecuencias[nombreNota];
-            if (!frecuencia) return;
-
-            const oscilador = audioContext.createOscillator();
-            const ganancia = audioContext.createGain();
-            oscilador.type = 'sine';
-            oscilador.frequency.setValueAtTime(frecuencia, audioContext.currentTime);
-            ganancia.gain.setValueAtTime(0, audioContext.currentTime);
-            ganancia.gain.linearRampToValueAtTime(0.5, audioContext.currentTime + 0.01);
-            ganancia.gain.linearRampToValueAtTime(0, audioContext.currentTime + tiempoDeDuracion);
-            oscilador.connect(ganancia);
-            ganancia.connect(audioContext.destination);
-            oscilador.start(audioContext.currentTime);
-            oscilador.stop(audioContext.currentTime + tiempoDeDuracion);
-        });
-    }
-
-    // --- FUNCIONES DEL EJERCICIO ---
-    function verificarRespuesta() {
-        // --- LÍNEA CLAVE AÑADIDA ---
-        // Al hacer clic, si el audio estaba suspendido, lo reanudamos.
-        if (audioContext.state === 'suspended') {
-            audioContext.resume();
-        }
-
-        const respuestaCorrecta = preguntas[preguntaActual].solucion;
-        const respuestasUsuario = [];
-        contenedorOpciones.querySelectorAll('input:checked').forEach(checkbox => {
-            respuestasUsuario.push(checkbox.value);
-        });
-        const esCorrecto = JSON.stringify(respuestaCorrecta.sort()) === JSON.stringify(respuestasUsuario.sort());
-        
-        if (esCorrecto) {
-            mensajeFeedback.textContent = '¡Correcto!';
-            mensajeFeedback.style.color = 'green';
-            reproducirAcorde(respuestaCorrecta); 
-        } else {
-            mensajeFeedback.textContent = `Incorrecto. La respuesta era: ${respuestaCorrecta.join(' - ')}.`;
-            mensajeFeedback.style.color = 'red';
-        }
-        
-        botonSiguiente.style.display = 'block';
-        botonVerificar.disabled = true;
-        contenedorOpciones.querySelectorAll('input').forEach(checkbox => checkbox.disabled = true);
-    }
-
-    // ... (El resto de las funciones: mostrarPregunta, crearOpcionesDeNotas, etc. no cambian)
-    function mostrarPregunta() {
-        if (!textoPregunta) return;
-        const pregunta = preguntas[preguntaActual];
-        textoPregunta.textContent = `Construye el acorde de: ${pregunta.tonica} ${pregunta.tipo}`;
-        mensajeFeedback.textContent = '';
-        botonSiguiente.style.display = 'none';
-        botonVerificar.disabled = false;
-        contenedorOpciones.querySelectorAll('input').forEach(checkbox => {
-            checkbox.checked = false;
-            checkbox.disabled = false;
-        });
-    }
-    function crearOpcionesDeNotas() {
-        if (!contenedorOpciones) return;
-        todasLasNotas.forEach(nota => {
-            const div = document.createElement('div');
-            div.classList.add('flex', 'items-center');
-            const checkbox = document.createElement('input');
-            checkbox.type = 'checkbox';
-            checkbox.id = `nota-${nota}`;
-            checkbox.value = nota;
-            checkbox.classList.add('mr-2');
-            const label = document.createElement('label');
-            label.htmlFor = `nota-${nota}`;
-            label.textContent = nota;
-            div.appendChild(checkbox);
-            div.appendChild(label);
-            contenedorOpciones.appendChild(div);
-        });
-    }
-    function siguientePregunta() {
-        preguntaActual = (preguntaActual + 1) % preguntas.length;
-        mostrarPregunta();
-    }
-
-    // --- INICIALIZACIÓN ---
-    if (document.getElementById('ejercicio-armonia')) {
-        crearOpcionesDeNotas();
-        mostrarPregunta();
-        botonVerificar.addEventListener('click', verificarRespuesta);
-        botonSiguiente.addEventListener('click', siguientePregunta);
-    }
-});
+    <script src="js/armonia.js"></script>
+</body>
+</html>
