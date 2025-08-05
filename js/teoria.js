@@ -12,13 +12,21 @@ document.addEventListener('DOMContentLoaded', () => {
     // Aquí guardamos nuestras preguntas. Cada una tiene una imagen y su respuesta correcta.
     // Por ahora, usamos las imágenes que ya tienes. ¡Más adelante puedes crear una imagen para cada nota!
     const preguntas = [
-        { imagen: 'icons/notas1.png', respuesta: 'DO' }, // La primera nota de esta imagen es DO
-        { imagen: 'icons/notas1.png', respuesta: 'RE' }, // La primera nota de esta imagen es RE
-        { imagen: 'icons/notas1.png', respuesta: 'LA' }, // La primera nota de esta imagen es LA
-        { imagen: 'icons/notas1.png', respuesta: 'FA' }, // La primera nota de esta imagen es FA
-        { imagen: 'icons/notas1.png', respuesta: 'MI' }, // La primera nota de esta imagen es MI
-        { imagen: 'icons/notas1.png', respuesta: 'SOL' }, // La primera nota de esta imagen es SOL
-        { imagen: 'icons/notas1.png', respuesta: 'SI' }, // La primera nota de esta imagen es SI
+        { imagen: 'icons/notas3.png', respuesta: 'DO' }, // La primera nota de esta imagen es DO
+        { imagen: 'icons/notas4.png', respuesta: 'RE' }, // La primera nota de esta imagen es RE
+        { imagen: 'icons/notas8.png', respuesta: 'LA' }, // La primera nota de esta imagen es LA
+        { imagen: 'icons/notas6.png', respuesta: 'FA' }, // La primera nota de esta imagen es FA
+        { imagen: 'icons/notas5.png', respuesta: 'MI' }, // La primera nota de esta imagen es MI
+        { imagen: 'icons/notas7.png', respuesta: 'SOL' }, // La primera nota de esta imagen es SOL
+        { imagen: 'icons/notas9.png', respuesta: 'SI' }, // La primera nota de esta imagen es SI
+        { imagen: 'icons/notas10.png', respuesta: 'DO' }, // La primera nota de esta imagen es DO
+        { imagen: 'icons/notas11.png', respuesta: 'RE' }, // La primera nota de esta imagen es RE
+        { imagen: 'icons/notas12.png', respuesta: 'MI' }, // La primera nota de esta imagen es MI
+        { imagen: 'icons/notas13.png', respuesta: 'FA' }, // La primera nota de esta imagen es FA
+        { imagen: 'icons/notas14.png', respuesta: 'SOL' }, // La primera nota de esta imagen es SOL
+        { imagen: 'icons/notas15.png', respuesta: 'LA' }, // La primera nota de esta imagen es LA
+        { imagen: 'icons/notas16.png', respuesta: 'SI' }, // La primera nota de esta imagen es SI
+        { imagen: 'icons/notas17.png', respuesta: 'DO' }, // La primera nota de esta imagen es DO
     ];
 
     let preguntaActual = 0; // Para saber en qué pregunta estamos.
