@@ -8,15 +8,33 @@ document.addEventListener('DOMContentLoaded', () => {
     const titleElement = document.getElementById('mucigrama-title');
     const horizontalCluesContainer = document.getElementById('horizontal-clues');
     const verticalCluesContainer = document.getElementById('vertical-clues');
-    let crosswordData = {};
+    const botonVerificar = document.getElementById('boton-verificar');
+    const botonLimpiar = document.getElementById('boton-limpiar');
+    const botonVolver = document.getElementById('boton-volver');
 
-    // --- FUNCIÓN PRINCIPAL: CARGAR Y CONSTRUIR EL PUZLE SELECCIONADO ---
+    let crosswordData = {};
+    let currentDirection = 'horizontal'; // 'horizontal' o 'vertical'
+    
+    // --- Lógica del Menú Principal ---
+    botonesPuzle.forEach(boton => {
+        boton.addEventListener('click', () => {
+            const nombrePuzle = boton.dataset.puzle;
+            iniciarMucigrama(nombrePuzle);
+        });
+    });
+
+    botonVolver.addEventListener('click', () => {
+        contenedorMucigrama.classList.add('hidden');
+        contenedorSeleccion.classList.remove('hidden');
+    });
+
+    botonLimpiar.addEventListener('click', limpiarCrucigrama);
+    botonVerificar.addEventListener('click', verificarRespuestas);
+    
+    // --- Función Principal ---
     function iniciarMucigrama(nombrePuzle) {
-        // Ocultamos el menú de selección y mostramos el contenedor del puzle
         contenedorSeleccion.classList.add('hidden');
         contenedorMucigrama.classList.remove('hidden');
-
-        // Limpiamos la rejilla y pistas anteriores
         gridContainer.innerHTML = '';
         horizontalCluesContainer.innerHTML = '';
         verticalCluesContainer.innerHTML = '';
@@ -25,50 +43,122 @@ document.addEventListener('DOMContentLoaded', () => {
             .then(response => response.json())
             .then(data => {
                 crosswordData = data;
-                document.title = crosswordData.titulo;
                 titleElement.textContent = crosswordData.titulo;
                 generateGrid();
                 displayClues();
-                loadProgress();
-                addKeyboardNavigation();
-            })
-            .catch(error => console.error("Error al cargar el mucigrama:", error));
+                // No cargamos progreso para permitir una experiencia limpia cada vez
+            });
     }
 
-    // --- EVENTO DE LOS BOTONES ---
-    // Cada botón, al ser presionado, llama a la función principal con el nombre de su puzle
-    botonesPuzle.forEach(boton => {
-        boton.addEventListener('click', () => {
-            const nombrePuzle = boton.dataset.puzle;
-            iniciarMucigrama(nombrePuzle);
+    // --- Nuevas Funciones de Botones ---
+    function limpiarCrucigrama() {
+        const cells = document.querySelectorAll('.cell:not(.black)');
+        cells.forEach(cell => {
+            cell.value = '';
+            cell.style.backgroundColor = 'white'; // Limpiar colores de verificación
         });
-    });
+    }
 
-    // --- FUNCIONES AUXILIARES (EXISTENTES Y SIN CAMBIOS) ---
+    function verificarRespuestas() {
+        const solution = crosswordData.solucion;
+        const cells = document.querySelectorAll('.cell:not(.black)');
+        cells.forEach(cell => {
+            const [_, row, col] = cell.id.split('-');
+            if (cell.value !== '') {
+                if (cell.value.toUpperCase() === solution[row][col]) {
+                    cell.style.backgroundColor = '#d4edda'; // Verde para correcto
+                } else {
+                    cell.style.backgroundColor = '#f8d7da'; // Rojo para incorrecto
+                }
+            } else {
+                 cell.style.backgroundColor = 'white'; // Blanco si está vacío
+            }
+        });
+    }
+
+    // --- Funciones de la Rejilla ---
     function generateGrid() {
         const solution = crosswordData.solucion;
         gridContainer.style.gridTemplateColumns = `repeat(${solution[0].length}, 30px)`;
         solution.forEach((row, rowIndex) => {
             row.forEach((cell, colIndex) => {
-                const cellElement = document.createElement('input');
-                cellElement.type = 'text';
-                cellElement.maxLength = 1;
-                cellElement.id = `cell-${rowIndex}-${colIndex}`;
-                cellElement.classList.add('cell');
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.maxLength = 1;
+                input.id = `cell-${rowIndex}-${colIndex}`;
+                input.classList.add('cell');
+
                 if (cell === '0') {
-                    cellElement.classList.add('black');
-                    cellElement.disabled = true;
+                    input.classList.add('black');
+                    input.disabled = true;
                 } else {
-                    cellElement.addEventListener('input', (e) => {
-                        e.target.value = e.target.value.toUpperCase();
-                        saveProgress();
-                    });
+                    // --- EVENTOS MEJORADOS ---
+                    input.addEventListener('input', handleInput);
+                    input.addEventListener('click', handleClick);
+                    input.addEventListener('keydown', handleKeyDown); // Para navegación con flechas
                 }
-                gridContainer.appendChild(cellElement);
+                gridContainer.appendChild(input);
             });
         });
     }
+    
+    // --- Lógica de Interacción Mejorada ---
+    function handleClick(e) {
+        const clickedCell = e.target;
+        // Si hacemos clic en la misma celda, cambiamos de dirección
+        if (document.activeElement === clickedCell) {
+            currentDirection = (currentDirection === 'horizontal') ? 'vertical' : 'horizontal';
+        } else {
+            currentDirection = 'horizontal'; // Por defecto, horizontal
+        }
+        highlightWord(clickedCell);
+    }
+    
+    function handleInput(e) {
+        e.target.value = e.target.value.toUpperCase();
+        const [_, row, col] = e.target.id.split('-');
+        
+        // --- Avance automático del cursor ---
+        let nextCell;
+        if (currentDirection === 'horizontal') {
+            nextCell = document.getElementById(`cell-${row}-${parseInt(col) + 1}`);
+        } else {
+            nextCell = document.getElementById(`cell-${parseInt(row) + 1}-${col}`);
+        }
+        
+        if (nextCell && !nextCell.disabled) {
+            nextCell.focus();
+        }
+    }
+
+    function handleKeyDown(e) {
+        // Navegación con flechas
+        const [_, rowStr, colStr] = e.target.id.split('-');
+        let row = parseInt(rowStr), col = parseInt(colStr);
+        let nextElement;
+
+        if (e.key === 'ArrowUp') nextElement = document.getElementById(`cell-${row - 1}-${col}`);
+        else if (e.key === 'ArrowDown') nextElement = document.getElementById(`cell-${row + 1}-${col}`);
+        else if (e.key === 'ArrowLeft') nextElement = document.getElementById(`cell-${row}-${col - 1}`);
+        else if (e.key === 'ArrowRight') nextElement = document.getElementById(`cell-${row}-${col + 1}`);
+        else if (e.key === 'Backspace' && e.target.value === '') {
+            if (currentDirection === 'horizontal') nextElement = document.getElementById(`cell-${row}-${col - 1}`);
+            else nextElement = document.getElementById(`cell-${row - 1}-${col}`);
+        }
+
+        if (nextElement && !nextElement.disabled) {
+            nextElement.focus();
+            e.preventDefault();
+        }
+    }
+
+    function highlightWord(cell) {
+        // Lógica para resaltar la palabra activa (opcional, pero mejora la UX)
+        // Puedes añadirla si quieres que la palabra actual se vea diferente
+    }
+
     function displayClues() {
+        // ... (Esta función no necesita cambios)
         for (const key in crosswordData.pistas) {
             const [number, direction] = key.split('-');
             const clueText = crosswordData.pistas[key];
@@ -80,60 +170,5 @@ document.addEventListener('DOMContentLoaded', () => {
                 verticalCluesContainer.appendChild(clueElement);
             }
         }
-    }
-    function saveProgress() {
-        const progress = {};
-        const cells = document.querySelectorAll('.cell:not(.black)');
-        cells.forEach(cell => {
-            if (cell.value) { progress[cell.id] = cell.value; }
-        });
-        localStorage.setItem(crosswordData.titulo, JSON.stringify(progress));
-    }
-    function loadProgress() {
-        const savedProgress = localStorage.getItem(crosswordData.titulo);
-        if (savedProgress) {
-            const progress = JSON.parse(savedProgress);
-            for (const cellId in progress) {
-                const cell = document.getElementById(cellId);
-                if (cell) { cell.value = progress[cellId]; }
-            }
-        }
-    }
-    function addKeyboardNavigation() {
-        document.addEventListener('keydown', (e) => {
-            const activeElement = document.activeElement;
-            if (!activeElement.classList.contains('cell')) return;
-            const [_, rowStr, colStr] = activeElement.id.split('-');
-            let row = parseInt(rowStr);
-            let col = parseInt(colStr);
-            let nextCell;
-            switch (e.key) {
-                case 'ArrowUp': nextCell = findNextAvailableCell(row, col, -1, 0); break;
-                case 'ArrowDown': nextCell = findNextAvailableCell(row, col, 1, 0); break;
-                case 'ArrowLeft': nextCell = findNextAvailableCell(row, col, 0, -1); break;
-                case 'ArrowRight': nextCell = findNextAvailableCell(row, col, 0, 1); break;
-                default: return;
-            }
-            if (nextCell) {
-                e.preventDefault();
-                nextCell.focus();
-            }
-        });
-    }
-    function findNextAvailableCell(startRow, startCol, dRow, dCol) {
-        let currentRow = startRow + dRow;
-        let currentCol = startCol + dCol;
-        const maxRows = crosswordData.solucion.length;
-        const maxCols = crosswordData.solucion[0].length;
-        while (currentRow >= 0 && currentRow < maxRows && currentCol >= 0 && currentCol < maxCols) {
-            const cellId = `cell-${currentRow}-${currentCol}`;
-            const cell = document.getElementById(cellId);
-            if (cell && !cell.disabled) {
-                return cell;
-            }
-            currentRow += dRow;
-            currentCol += dCol;
-        }
-        return null;
     }
 });
