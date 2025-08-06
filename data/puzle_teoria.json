@@ -1,0 +1,21 @@
+{
+  "titulo": "Mucigrama: Teoría Básica",
+  "solucion": [
+    ["0", "0", "P", "E", "N", "T", "A", "G", "R", "A", "M", "A", "0"],
+    ["E", "S", "C", "A", "L", "A", "0", "0", "E", "0", "0", "C", "0"],
+    ["0", "0", "L", "0", "0", "0", "0", "0", "D", "0", "0", "O", "0"],
+    ["0", "0", "A", "0", "N", "O", "T", "A", "S", "0", "0", "R", "0"],
+    ["0", "0", "V", "0", "0", "0", "0", "0", "I", "0", "0", "D", "0"],
+    ["S", "I", "L", "E", "N", "C", "I", "O", "S", "0", "S", "E", "0"],
+    ["0", "0", "E", "0", "0", "0", "0", "0", "O", "0", "O", "0", "0"]
+  ],
+  "pistas": {
+    "1-horizontal": "Conjunto de 5 líneas y 4 espacios donde se escribe la música.",
+    "2-horizontal": "Sucesión de notas ordenadas de forma ascendente o descendente.",
+    "4-horizontal": "Símbolos que representan los sonidos.",
+    "6-horizontal": "Signos que representan la ausencia de sonido.",
+    "1-vertical": "Figura que dura cuatro tiempos en un compás de 4/4.",
+    "3-vertical": "Signo que da nombre y altura a las notas en el pentagrama.",
+    "5-vertical": "Nota que sigue a SOL en la escala."
+  }
+}
