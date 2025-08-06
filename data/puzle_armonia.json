@@ -1,24 +1,24 @@
 {
   "titulo": "Mucigrama: Armonía Básica",
   "solucion": [
-    ["0", "T", "R", "I", "A", "D", "A", "0", "0"],
-    ["0", "O", "0", "0", "0", "0", "C", "0", "0"],
-    ["M", "N", "0", "M", "A", "Y", "O", "R", "0"],
-    ["E", "I", "0", "0", "0", "0", "R", "0", "0"],
-    ["N", "C", "0", "T", "E", "R", "C", "E", "R", "A"],
-    ["O", "A", "0", "0", "0", "0", "E", "0", "U", "0"],
-    ["R", "0", "0", "0", "0", "0", "S", "0", "I", "0"],
-    ["0", "0", "Q", "U", "I", "N", "T", "A", "N", "0"],
-    ["0", "0", "0", "0", "0", "0", "A", "0", "T", "0"]
+    ["0", "T", "R", "I", "A", "D", "A", "0"],
+    ["0", "O", "0", "0", "C", "0", "C", "0"],
+    ["M", "N", "O", "R", "O", "0", "O", "0"],
+    ["A", "I", "0", "D", "R", "D", "E", "0"],
+    ["Y", "C", "0", "E", "0", "0", "0", "0"],
+    ["O", "A", "0", "0", "M", "E", "N", "O", "R"],
+    ["R", "0", "0", "0", "0", "0", "0", "T", "0"],
+    ["0", "T", "O", "N", "I", "C", "A", "A", "0"]
   ],
-  "pistas": {
-    "1-horizontal": "Acorde de tres notas formado por superposición de terceras.",
-    "3-horizontal": "Tipo de acorde que suena brillante y feliz.",
-    "5-horizontal": "Intervalo que define la cualidad (mayor/menor) de un acorde.",
-    "8-horizontal": "Intervalo fundamental en la construcción de la mayoría de los acordes básicos.",
-    "2-vertical": "Nota que da nombre al acorde.",
-    "4-vertical": "Tipo de acorde que suena melancólico.",
-    "6-vertical": "El acorde de Do Mayor está formado por Do, Mi y esta nota.",
-    "7-vertical": "El acorde de La menor está formado por La, Do y esta nota."
-  }
+  "pistas": [
+    { "numero": 1, "direccion": "horizontal", "fila": 0, "col": 1, "texto": "Acorde de tres notas." },
+    { "numero": 3, "direccion": "horizontal", "fila": 2, "col": 0, "texto": "Cualidad de un acorde que suena melancólico." },
+    { "numero": 5, "direccion": "horizontal", "fila": 4, "col": 0, "texto": "Cualidad de un acorde que suena alegre." },
+    { "numero": 7, "direccion": "horizontal", "fila": 6, "col": 4, "texto": "Tercera del acorde de Do Mayor." },
+    { "numero": 8, "direccion": "horizontal", "fila": 8, "col": 1, "texto": "Nota fundamental que da nombre al acorde." },
+    { "numero": 1, "direccion": "vertical", "fila": 0, "col": 1, "texto": "Quinta del acorde de Do Mayor." },
+    { "numero": 2, "direccion": "vertical", "fila": 0, "col": 4, "texto": "Acorde formado por Do-Mi-Sol." },
+    { "numero": 4, "direccion": "vertical", "fila": 2, "col": 3, "texto": "Nota musical que sigue a DO." },
+    { "numero": 6, "direccion": "vertical", "fila": 4, "col": 1, "texto": "Nota musical que sigue a SI." }
+  ]
 }
