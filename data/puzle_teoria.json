@@ -12,14 +12,14 @@
   ],
   "pistas": [
     { "numero": 1, "direccion": "horizontal", "fila": 0, "col": 0, "texto": "Lectura y entonación de las notas de una partitura." },
-    { "numero": 4, "direccion": "horizontal", "fila": 2, "col": 3, "texto": "Distancia más pequeña o más grande entre dos notas." },
+    { "numero": 4, "direccion": "horizontal", "fila": 2, "col": 3, "texto": "Distancia entre dos notas." },
     { "numero": 6, "direccion": "horizontal", "fila": 4, "col": 0, "texto": "Figura musical que dura un tiempo." },
-    { "numero": 8, "direccion": "horizontal", "fila": 6, "col": 0, "texto": "Pausa de duración variable." },
-    { "numero": 9, "direccion": "horizontal", "fila": 7, "col": 2, "texto": "Patrón rítmico de un compás." },
+    { "numero": 8, "direccion": "horizontal", "fila": 6, "col": 0, "texto": "Pausa que indica la interrupción del sonido." },
+    { "numero": 9, "direccion": "horizontal", "fila": 7, "col": 2, "texto": "Organización de pulsos y acentos en un compás." },
     { "numero": 1, "direccion": "vertical", "fila": 0, "col": 0, "texto": "Nota musical que sigue a FA." },
-    { "numero": 2, "direccion": "vertical", "fila": 0, "col": 4, "texto": "Abreviatura de escala." },
+    { "numero": 2, "direccion": "vertical", "fila": 0, "col": 4, "texto": "Sucesión ordenada de notas." },
     { "numero": 3, "direccion": "vertical", "fila": 1, "col": 0, "texto": "Nota musical que sigue a LA." },
-    { "numero": 5, "direccion": "vertical", "fila": 2, "col": 6, "texto": "Sinónimo de nota." },
-    { "numero": 7, "direccion": "vertical", "fila": 4, "col": 0, "texto": "Nota musical que sigue a MI." }
+    { "numero": 5, "direccion": "vertical", "fila": 2, "col": 6, "texto": "Sinónimo de nota musical." },
+    { "numero": 7, "direccion": "vertical", "fila": 4, "col": 0, "texto": "Figura que equivale a dos corcheas." }
   ]
 }
