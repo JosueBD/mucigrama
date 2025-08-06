@@ -1,145 +1,139 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-    // 1. DIBUJO DEL CRUCIGRAMA
-    // '#' es una casilla negra. '.' es una casilla para una letra.
-    const gridLayout = [
-        "....10.",
-        "....S..",
-        ".2RITMO.",
-        "9SILENCIO",
-        "....A..",
-        "....6TIMBRE",
-        "....S..",
-        "....#..",
-        "8ACORDE7ESCALA",
-        "....#..",
-        "1MELODIA.",
-        "....#..",
-        "3ARMONIA.",
-        "5COMPAS..",
-    ];
+    // --- ELEMENTOS DEL HTML ---
+    const botonesPuzle = document.querySelectorAll('.boton-puzle');
+    const contenedorSeleccion = document.getElementById('seleccion-puzle');
+    const contenedorMucigrama = document.getElementById('contenedor-mucigrama');
+    const gridContainer = document.getElementById('grid-container');
+    const titleElement = document.getElementById('mucigrama-title');
+    const horizontalCluesContainer = document.getElementById('horizontal-clues');
+    const verticalCluesContainer = document.getElementById('vertical-clues');
+    let crosswordData = {};
 
-    // 2. PALABRAS Y PISTAS
-    const wordsData = [
-        // Horizontales
-        { num: 2, clue: "Orden y proporción en el movimiento o sucesión de los sonidos.", answer: "RITMO" },
-        { num: 8, clue: "Conjunto de tres o más notas que suenan simultáneamente.", answer: "ACORDE" },
-        { num: 3, clue: "Combinación de sonidos simultáneos que resultan agradables.", answer: "ARMONIA" },
-        { num: 5, clue: "División de la música en partes iguales de tiempo.", answer: "COMPAS" },
-        // Verticales
-        { num: 10, clue: "Signos que representan los sonidos musicales.", answer: "NOTAS" },
-        { num: 9, clue: "Ausencia de sonido en la música.", answer: "SILENCIO" },
-        { num: 6, clue: "Cualidad del sonido que permite distinguir la fuente sonora.", answer: "TIMBRE" },
-        { num: 7, clue: "Sucesión de sonidos ascendentes o descendentes.", answer: "ESCALA" },
-        { num: 1, clue: "Sucesión de sonidos que forman una unidad musical.", answer: "MELODIA" },
-    ];
+    // --- FUNCIÓN PRINCIPAL: CARGAR Y CONSTRUIR EL PUZLE SELECCIONADO ---
+    function iniciarMucigrama(nombrePuzle) {
+        // Ocultamos el menú de selección y mostramos el contenedor del puzle
+        contenedorSeleccion.classList.add('hidden');
+        contenedorMucigrama.classList.remove('hidden');
 
-    const gridEl = document.getElementById('crossword-grid');
-    const acrossCluesEl = document.getElementById('across-clues');
-    const downCluesEl = document.getElementById('down-clues');
+        // Limpiamos la rejilla y pistas anteriores
+        gridContainer.innerHTML = '';
+        horizontalCluesContainer.innerHTML = '';
+        verticalCluesContainer.innerHTML = '';
 
-    const grid = [];
-
-    // 3. GENERACIÓN DEL GRID Y PISTAS
-    const rows = gridLayout.length;
-    const cols = gridLayout[0].length;
-    gridEl.style.gridTemplateColumns = `repeat(${cols}, minmax(0, 1fr))`;
-    gridEl.style.width = `min(90vw, ${cols * 40}px)`; // Responsive width
-
-    for (let r = 0; r < rows; r++) {
-        grid[r] = [];
-        for (let c = 0; c < cols; c++) {
-            const cellData = { row: r, col: c, el: null, input: null };
-            grid[r][c] = cellData;
-
-            const cell = document.createElement('div');
-            cell.classList.add('grid-cell');
-
-            const char = gridLayout[r][c];
-            if (char === '#') {
-                cell.classList.add('black');
-            } else {
-                const input = document.createElement('input');
-                input.type = 'text';
-                input.maxLength = 1;
-                cellData.input = input;
-                cell.appendChild(input);
-
-                // Número de pista
-                const match = gridLayout[r].substring(c).match(/^\d+/);
-                if (match) {
-                    const number = parseInt(match[0]);
-                    const numberEl = document.createElement('div');
-                    numberEl.classList.add('clue-number');
-                    numberEl.textContent = number;
-                    cell.appendChild(numberEl);
-                }
-            }
-            gridEl.appendChild(cell);
-            cellData.el = cell;
-        }
+        fetch(`data/${nombrePuzle}.json`)
+            .then(response => response.json())
+            .then(data => {
+                crosswordData = data;
+                document.title = crosswordData.titulo;
+                titleElement.textContent = crosswordData.titulo;
+                generateGrid();
+                displayClues();
+                loadProgress();
+                addKeyboardNavigation();
+            })
+            .catch(error => console.error("Error al cargar el mucigrama:", error));
     }
 
-    // 4. PINTAR LISTA DE PISTAS
-    wordsData.forEach(word => {
-        if ([2, 8, 3, 5].includes(word.num)) {
-            // Horizontales
-            const li = document.createElement('li');
-            li.textContent = `${word.num}. ${word.clue}`;
-            acrossCluesEl.appendChild(li);
-        } else {
-            // Verticales
-            const li = document.createElement('li');
-            li.textContent = `${word.num}. ${word.clue}`;
-            downCluesEl.appendChild(li);
-        }
+    // --- EVENTO DE LOS BOTONES ---
+    // Cada botón, al ser presionado, llama a la función principal con el nombre de su puzle
+    botonesPuzle.forEach(boton => {
+        boton.addEventListener('click', () => {
+            const nombrePuzle = boton.dataset.puzle;
+            iniciarMucigrama(nombrePuzle);
+        });
     });
 
-    // 5. EVENTOS DE LOS BOTONES
-    document.getElementById('check-button').addEventListener('click', checkAnswers);
-    document.getElementById('solve-button').addEventListener('click', showSolution);
-    document.getElementById('clear-button').addEventListener('click', clearGrid);
-
-    // 6. FUNCIONES
-    function checkAnswers() {
-        grid.flat().forEach(cell => {
-            if (!cell.input) return;
-            const r = cell.row;
-            const c = cell.col;
-            const expectedChar = gridLayout[r][c].match(/[a-zA-Z]/) ? gridLayout[r][c].toUpperCase() : null;
-
-            cell.el.classList.remove('correct', 'incorrect');
-
-            if (cell.input.value && expectedChar) {
-                if (cell.input.value.toUpperCase() === expectedChar) {
-                    cell.el.classList.add('correct');
+    // --- FUNCIONES AUXILIARES (EXISTENTES Y SIN CAMBIOS) ---
+    function generateGrid() {
+        const solution = crosswordData.solucion;
+        gridContainer.style.gridTemplateColumns = `repeat(${solution[0].length}, 30px)`;
+        solution.forEach((row, rowIndex) => {
+            row.forEach((cell, colIndex) => {
+                const cellElement = document.createElement('input');
+                cellElement.type = 'text';
+                cellElement.maxLength = 1;
+                cellElement.id = `cell-${rowIndex}-${colIndex}`;
+                cellElement.classList.add('cell');
+                if (cell === '0') {
+                    cellElement.classList.add('black');
+                    cellElement.disabled = true;
                 } else {
-                    cell.el.classList.add('incorrect');
+                    cellElement.addEventListener('input', (e) => {
+                        e.target.value = e.target.value.toUpperCase();
+                        saveProgress();
+                    });
                 }
+                gridContainer.appendChild(cellElement);
+            });
+        });
+    }
+    function displayClues() {
+        for (const key in crosswordData.pistas) {
+            const [number, direction] = key.split('-');
+            const clueText = crosswordData.pistas[key];
+            const clueElement = document.createElement('p');
+            clueElement.innerHTML = `<b>${number}.</b> ${clueText}`;
+            if (direction === 'horizontal') {
+                horizontalCluesContainer.appendChild(clueElement);
+            } else {
+                verticalCluesContainer.appendChild(clueElement);
+            }
+        }
+    }
+    function saveProgress() {
+        const progress = {};
+        const cells = document.querySelectorAll('.cell:not(.black)');
+        cells.forEach(cell => {
+            if (cell.value) { progress[cell.id] = cell.value; }
+        });
+        localStorage.setItem(crosswordData.titulo, JSON.stringify(progress));
+    }
+    function loadProgress() {
+        const savedProgress = localStorage.getItem(crosswordData.titulo);
+        if (savedProgress) {
+            const progress = JSON.parse(savedProgress);
+            for (const cellId in progress) {
+                const cell = document.getElementById(cellId);
+                if (cell) { cell.value = progress[cellId]; }
+            }
+        }
+    }
+    function addKeyboardNavigation() {
+        document.addEventListener('keydown', (e) => {
+            const activeElement = document.activeElement;
+            if (!activeElement.classList.contains('cell')) return;
+            const [_, rowStr, colStr] = activeElement.id.split('-');
+            let row = parseInt(rowStr);
+            let col = parseInt(colStr);
+            let nextCell;
+            switch (e.key) {
+                case 'ArrowUp': nextCell = findNextAvailableCell(row, col, -1, 0); break;
+                case 'ArrowDown': nextCell = findNextAvailableCell(row, col, 1, 0); break;
+                case 'ArrowLeft': nextCell = findNextAvailableCell(row, col, 0, -1); break;
+                case 'ArrowRight': nextCell = findNextAvailableCell(row, col, 0, 1); break;
+                default: return;
+            }
+            if (nextCell) {
+                e.preventDefault();
+                nextCell.focus();
             }
         });
     }
-
-    function showSolution() {
-        grid.flat().forEach(cell => {
-            if (!cell.input) return;
-            const r = cell.row;
-            const c = cell.col;
-            const expectedChar = gridLayout[r][c].match(/[a-zA-Z]/) ? gridLayout[r][c].toUpperCase() : null;
-            if (expectedChar) {
-                cell.input.value = expectedChar;
-                cell.el.classList.remove('incorrect');
-                cell.el.classList.add('correct');
+    function findNextAvailableCell(startRow, startCol, dRow, dCol) {
+        let currentRow = startRow + dRow;
+        let currentCol = startCol + dCol;
+        const maxRows = crosswordData.solucion.length;
+        const maxCols = crosswordData.solucion[0].length;
+        while (currentRow >= 0 && currentRow < maxRows && currentCol >= 0 && currentCol < maxCols) {
+            const cellId = `cell-${currentRow}-${currentCol}`;
+            const cell = document.getElementById(cellId);
+            if (cell && !cell.disabled) {
+                return cell;
             }
-        });
-    }
-
-    function clearGrid() {
-        grid.flat().forEach(cell => {
-            if (cell.input) {
-                cell.input.value = '';
-                cell.el.classList.remove('correct', 'incorrect');
-            }
-        });
+            currentRow += dRow;
+            currentCol += dCol;
+        }
+        return null;
     }
 });
