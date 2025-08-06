@@ -13,32 +13,24 @@ document.addEventListener('DOMContentLoaded', () => {
     const botonVolver = document.getElementById('boton-volver');
 
     let crosswordData = {};
-    let currentDirection = 'horizontal'; // 'horizontal' o 'vertical'
-    
-    // --- Lógica del Menú Principal ---
-    botonesPuzle.forEach(boton => {
-        boton.addEventListener('click', () => {
-            const nombrePuzle = boton.dataset.puzle;
-            iniciarMucigrama(nombrePuzle);
-        });
-    });
+    let currentDirection = 'horizontal';
 
-    botonVolver.addEventListener('click', () => {
-        contenedorMucigrama.classList.add('hidden');
-        contenedorSeleccion.classList.remove('hidden');
-    });
-
+    // --- Lógica del Menú ---
+    botonesPuzle.forEach(boton => boton.addEventListener('click', () => iniciarMucigrama(boton.dataset.puzle)));
+    botonVolver.addEventListener('click', volverAlMenu);
     botonLimpiar.addEventListener('click', limpiarCrucigrama);
     botonVerificar.addEventListener('click', verificarRespuestas);
     
+    function volverAlMenu() {
+        contenedorMucigrama.classList.add('hidden');
+        contenedorSeleccion.classList.remove('hidden');
+    }
+
     // --- Función Principal ---
     function iniciarMucigrama(nombrePuzle) {
         contenedorSeleccion.classList.add('hidden');
         contenedorMucigrama.classList.remove('hidden');
         gridContainer.innerHTML = '';
-        horizontalCluesContainer.innerHTML = '';
-        verticalCluesContainer.innerHTML = '';
-
         fetch(`data/${nombrePuzle}.json`)
             .then(response => response.json())
             .then(data => {
@@ -46,32 +38,25 @@ document.addEventListener('DOMContentLoaded', () => {
                 titleElement.textContent = crosswordData.titulo;
                 generateGrid();
                 displayClues();
-                // No cargamos progreso para permitir una experiencia limpia cada vez
             });
     }
 
-    // --- Nuevas Funciones de Botones ---
+    // --- Funciones de Botones ---
     function limpiarCrucigrama() {
-        const cells = document.querySelectorAll('.cell:not(.black)');
-        cells.forEach(cell => {
+        document.querySelectorAll('.cell:not(.black)').forEach(cell => {
             cell.value = '';
-            cell.style.backgroundColor = 'white'; // Limpiar colores de verificación
+            cell.style.backgroundColor = 'white';
         });
     }
 
     function verificarRespuestas() {
         const solution = crosswordData.solucion;
-        const cells = document.querySelectorAll('.cell:not(.black)');
-        cells.forEach(cell => {
+        document.querySelectorAll('.cell:not(.black)').forEach(cell => {
             const [_, row, col] = cell.id.split('-');
             if (cell.value !== '') {
-                if (cell.value.toUpperCase() === solution[row][col]) {
-                    cell.style.backgroundColor = '#d4edda'; // Verde para correcto
-                } else {
-                    cell.style.backgroundColor = '#f8d7da'; // Rojo para incorrecto
-                }
+                cell.style.backgroundColor = cell.value.toUpperCase() === solution[row][col] ? '#d4edda' : '#f8d7da';
             } else {
-                 cell.style.backgroundColor = 'white'; // Blanco si está vacío
+                cell.style.backgroundColor = 'white';
             }
         });
     }
@@ -80,61 +65,62 @@ document.addEventListener('DOMContentLoaded', () => {
     function generateGrid() {
         const solution = crosswordData.solucion;
         gridContainer.style.gridTemplateColumns = `repeat(${solution[0].length}, 30px)`;
+
         solution.forEach((row, rowIndex) => {
             row.forEach((cell, colIndex) => {
+                const container = document.createElement('div');
+                container.classList.add('cell-container');
+
                 const input = document.createElement('input');
                 input.type = 'text';
                 input.maxLength = 1;
                 input.id = `cell-${rowIndex}-${colIndex}`;
+                input.dataset.row = rowIndex;
+                input.dataset.col = colIndex;
                 input.classList.add('cell');
 
                 if (cell === '0') {
                     input.classList.add('black');
                     input.disabled = true;
                 } else {
-                    // --- EVENTOS MEJORADOS ---
+                    // Verificamos si esta celda es el inicio de una pista para ponerle número
+                    const clue = crosswordData.pistas.find(p => p.fila === rowIndex && p.col === colIndex);
+                    if (clue) {
+                        const numberSpan = document.createElement('span');
+                        numberSpan.classList.add('clue-number');
+                        numberSpan.textContent = clue.numero;
+                        container.appendChild(numberSpan);
+                    }
                     input.addEventListener('input', handleInput);
                     input.addEventListener('click', handleClick);
-                    input.addEventListener('keydown', handleKeyDown); // Para navegación con flechas
+                    input.addEventListener('keydown', handleKeyDown);
                 }
-                gridContainer.appendChild(input);
+                container.appendChild(input);
+                gridContainer.appendChild(container);
             });
         });
     }
     
-    // --- Lógica de Interacción Mejorada ---
+    // --- Lógica de Interacción ---
     function handleClick(e) {
         const clickedCell = e.target;
-        // Si hacemos clic en la misma celda, cambiamos de dirección
         if (document.activeElement === clickedCell) {
             currentDirection = (currentDirection === 'horizontal') ? 'vertical' : 'horizontal';
         } else {
-            currentDirection = 'horizontal'; // Por defecto, horizontal
+            currentDirection = 'horizontal';
         }
         highlightWord(clickedCell);
     }
     
     function handleInput(e) {
         e.target.value = e.target.value.toUpperCase();
-        const [_, row, col] = e.target.id.split('-');
-        
-        // --- Avance automático del cursor ---
-        let nextCell;
-        if (currentDirection === 'horizontal') {
-            nextCell = document.getElementById(`cell-${row}-${parseInt(col) + 1}`);
-        } else {
-            nextCell = document.getElementById(`cell-${parseInt(row) + 1}-${col}`);
-        }
-        
-        if (nextCell && !nextCell.disabled) {
-            nextCell.focus();
-        }
+        advanceCursor(e.target);
     }
 
     function handleKeyDown(e) {
-        // Navegación con flechas
-        const [_, rowStr, colStr] = e.target.id.split('-');
-        let row = parseInt(rowStr), col = parseInt(colStr);
+        let { row, col } = e.target.dataset;
+        row = parseInt(row);
+        col = parseInt(col);
         let nextElement;
 
         if (e.key === 'ArrowUp') nextElement = document.getElementById(`cell-${row - 1}-${col}`);
@@ -148,27 +134,42 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (nextElement && !nextElement.disabled) {
             nextElement.focus();
+            highlightWord(nextElement);
             e.preventDefault();
         }
     }
-
-    function highlightWord(cell) {
-        // Lógica para resaltar la palabra activa (opcional, pero mejora la UX)
-        // Puedes añadirla si quieres que la palabra actual se vea diferente
+    
+    function advanceCursor(cell) {
+        let { row, col } = cell.dataset;
+        let nextCell;
+        if (currentDirection === 'horizontal') {
+            nextCell = document.getElementById(`cell-${row}-${parseInt(col) + 1}`);
+        } else {
+            nextCell = document.getElementById(`cell-${parseInt(row) + 1}-${col}`);
+        }
+        if (nextCell && !nextCell.disabled) {
+            nextCell.focus();
+            highlightWord(nextCell);
+        }
+    }
+    
+    function highlightWord(activeCell) {
+        document.querySelectorAll('.cell').forEach(c => c.classList.remove('highlight'));
+        // (Esta función puede expandirse para colorear toda la palabra)
+        activeCell.classList.add('highlight');
     }
 
     function displayClues() {
-        // ... (Esta función no necesita cambios)
-        for (const key in crosswordData.pistas) {
-            const [number, direction] = key.split('-');
-            const clueText = crosswordData.pistas[key];
+        horizontalCluesContainer.innerHTML = '';
+        verticalCluesContainer.innerHTML = '';
+        crosswordData.pistas.forEach(pista => {
             const clueElement = document.createElement('p');
-            clueElement.innerHTML = `<b>${number}.</b> ${clueText}`;
-            if (direction === 'horizontal') {
+            clueElement.innerHTML = `<b>${pista.numero}.</b> ${pista.texto}`;
+            if (pista.direccion === 'horizontal') {
                 horizontalCluesContainer.appendChild(clueElement);
             } else {
                 verticalCluesContainer.appendChild(clueElement);
             }
-        }
+        });
     }
 });
