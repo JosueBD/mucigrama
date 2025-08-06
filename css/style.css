@@ -54,4 +54,21 @@
 .cell.black {
     background-color: #2d3748;
     border-color: #2d3748;
+/* --- Estilos para el número de la pista en la rejilla --- */
+.cell-container {
+    position: relative;
+}
+.clue-number {
+    position: absolute;
+    top: 1px;
+    left: 2px;
+    font-size: 9px;
+    font-weight: bold;
+    color: #333;
+    /* Evita que el número interfiera con el clic en la casilla */
+    pointer-events: none; 
+}
+/* Estilo para la palabra activa */
+.highlight {
+    background-color: #ebf8ff; /* Un azul claro */
 }
