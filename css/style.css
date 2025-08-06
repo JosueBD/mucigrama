@@ -68,7 +68,27 @@
     /* Evita que el número interfiera con el clic en la casilla */
     pointer-events: none; 
 }
+/* --- Estilos para el número de la pista (Método Nuevo) --- */
+/* La celda de input ahora es el contenedor de referencia */
+.cell {
+    position: relative;
+    /* Damos espacio para que el número se vea bien */
+    text-indent: 8px; 
+}
+
+/* Usamos ::before para crear el número virtualmente */
+.cell[data-clue-number]::before {
+    content: attr(data-clue-number); /* El contenido será el número que pongamos en el HTML */
+    position: absolute;
+    top: 1px;
+    left: 2px;
+    font-size: 9px;
+    font-weight: bold;
+    color: #333;
+}
+
 /* Estilo para la palabra activa */
 .highlight {
     background-color: #ebf8ff; /* Un azul claro */
+
 }
