@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let crosswordData = {};
     let currentDirection = 'horizontal';
 
-    // --- Lógica del Menú ---
+    // --- LÓGICA DEL MENÚ Y BOTONES ---
     botonesPuzle.forEach(boton => boton.addEventListener('click', () => iniciarMucigrama(boton.dataset.puzle)));
     botonVolver.addEventListener('click', volverAlMenu);
     botonLimpiar.addEventListener('click', limpiarCrucigrama);
@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
         contenedorSeleccion.classList.remove('hidden');
     }
 
-    // --- Función Principal ---
+    // --- FUNCIÓN PRINCIPAL ---
     function iniciarMucigrama(nombrePuzle) {
         contenedorSeleccion.classList.add('hidden');
         contenedorMucigrama.classList.remove('hidden');
@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
     }
 
-    // --- Funciones de Botones ---
+    // --- FUNCIONES DE BOTONES ---
     function limpiarCrucigrama() {
         document.querySelectorAll('.cell:not(.black)').forEach(cell => {
             cell.value = '';
@@ -52,7 +52,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function verificarRespuestas() {
         const solution = crosswordData.solucion;
         document.querySelectorAll('.cell:not(.black)').forEach(cell => {
-            const [_, row, col] = cell.id.split('-');
+            const { row, col } = cell.dataset;
             if (cell.value !== '') {
                 cell.style.backgroundColor = cell.value.toUpperCase() === solution[row][col] ? '#d4edda' : '#f8d7da';
             } else {
@@ -61,16 +61,13 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- Funciones de la Rejilla ---
+    // --- FUNCIÓN MEJORADA PARA GENERAR LA REJILLA ---
     function generateGrid() {
         const solution = crosswordData.solucion;
-        gridContainer.style.gridTemplateColumns = `repeat(${solution[0].length}, 30px)`;
+        gridContainer.style.gridTemplateColumns = `repeat(${solution[0].length}, 35px)`; // Un poco más ancha la celda
 
         solution.forEach((row, rowIndex) => {
             row.forEach((cell, colIndex) => {
-                const container = document.createElement('div');
-                container.classList.add('cell-container');
-
                 const input = document.createElement('input');
                 input.type = 'text';
                 input.maxLength = 1;
@@ -83,25 +80,21 @@ document.addEventListener('DOMContentLoaded', () => {
                     input.classList.add('black');
                     input.disabled = true;
                 } else {
-                    // Verificamos si esta celda es el inicio de una pista para ponerle número
+                    // MÉTODO NUEVO: Añadimos el número como un atributo de datos
                     const clue = crosswordData.pistas.find(p => p.fila === rowIndex && p.col === colIndex);
                     if (clue) {
-                        const numberSpan = document.createElement('span');
-                        numberSpan.classList.add('clue-number');
-                        numberSpan.textContent = clue.numero;
-                        container.appendChild(numberSpan);
+                        input.dataset.clueNumber = clue.numero;
                     }
                     input.addEventListener('input', handleInput);
                     input.addEventListener('click', handleClick);
                     input.addEventListener('keydown', handleKeyDown);
                 }
-                container.appendChild(input);
-                gridContainer.appendChild(container);
+                gridContainer.appendChild(input);
             });
         });
     }
     
-    // --- Lógica de Interacción ---
+    // --- LÓGICA DE INTERACCIÓN (SIN CAMBIOS GRANDES) ---
     function handleClick(e) {
         const clickedCell = e.target;
         if (document.activeElement === clickedCell) {
@@ -119,8 +112,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function handleKeyDown(e) {
         let { row, col } = e.target.dataset;
-        row = parseInt(row);
-        col = parseInt(col);
+        row = parseInt(row); col = parseInt(col);
         let nextElement;
 
         if (e.key === 'ArrowUp') nextElement = document.getElementById(`cell-${row - 1}-${col}`);
@@ -155,7 +147,6 @@ document.addEventListener('DOMContentLoaded', () => {
     
     function highlightWord(activeCell) {
         document.querySelectorAll('.cell').forEach(c => c.classList.remove('highlight'));
-        // (Esta función puede expandirse para colorear toda la palabra)
         activeCell.classList.add('highlight');
     }
 
