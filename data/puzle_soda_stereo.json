@@ -1,0 +1,13 @@
+{
+  "titulo": "Mucigrama: Soda Stereo",
+  "rejilla": [
+    [ "C", "A", "N", "C", "I", "O", "N" ],
+    [ "0", "0", "0", "0", "0", "0", "I" ],
+    [ "0", "0", "0", "0", "0", "0", "M" ],
+    [ "0", "0", "0", "0", "0", "0", "A" ]
+  ],
+  "pistas": [
+    { "numero": 1, "direccion": "HORIZONTAL", "texto": "Nombre del álbum de la banda Soda Stereo..." },
+    { "numero": 2, "direccion": "VERTICAL", "texto": "Instrumento de percusión..." }
+  ]
+}
