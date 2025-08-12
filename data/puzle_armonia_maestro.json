@@ -1,16 +1,16 @@
 {
   "titulo": "Mucigrama: Armonía Profesional",
   "solucion": [
-    ["0", "T", "0", "0", "D", "I", "S", "O", "N", "A", "N", "C", "I", "A", "0"],
-    ["0", "R", "0", "0", "0", "0", "U", "0", "0", "0", "0", "0", "0", "C", "0"],
-    ["0", "I", "0", "S", "U", "B", "D", "O", "M", "I", "N", "A", "N", "T", "E"],
-    ["0", "A", "0", "0", "0", "0", "I", "0", "0", "0", "0", "0", "0", "I", "0"],
-    ["T", "D", "0", "T", "O", "N", "A", "L", "I", "D", "A", "D", "0", "C", "0"],
-    ["O", "A", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "A", "0"],
-    ["N", "0", "C", "O", "N", "S", "O", "N", "A", "N", "C", "I", "A", "0", "0"],
-    ["I", "0", "0", "0", "0", "0", "L", "0", "0", "0", "0", "0", "S", "E", "X", "T", "A"],
-    ["C", "0", "Q", "U", "I", "N", "T", "A", "0", "0", "S", "0", "0", "0", "0"],
-    ["A", "0", "0", "0", "0", "0", "A", "0", "0", "M", "E", "D", "I", "A", "0"]
+    [" ", "T", " ", " ", "D", "I", "S", "O", "N", "A", "N", "C", "I", "A", " "],
+    [" ", "R", " ", " ", " ", " ", "U", " ", " ", " ", " ", " ", " ", "C", " "],
+    [" ", "I", " ", "S", "U", "B", "D", "O", "M", "I", "N", "A", "N", "T", "E"],
+    [" ", "A", " ", " ", " ", " ", "I", " ", " ", " ", " ", " ", " ", "I", " "],
+    ["T", "D", " ", "T", "O", "N", "A", "L", "I", "D", "A", "D", " ", "C", " "],
+    ["O", "A", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "A", " "],
+    ["N", " ", "C", "O", "N", "S", "O", "N", "A", "N", "C", "I", "A", " ", " "],
+    ["I", " ", " ", " ", " ", " ", "L", " ", " ", " ", " ", " ", "S", "E", "X", "T", "A"],
+    ["C", " ", "Q", "U", "I", "N", "T", "A", " ", " ", "S", " ", " ", " ", " "],
+    ["A", " ", " ", " ", " ", " ", "A", " ", " ", "M", "E", "D", "I", "A", " "]
   ],
   "pistas": [
     { "numero": 1, "direccion": "horizontal", "fila": 0, "col": 3, "texto": "Sonidos que crean tensión y necesitan resolución." },
@@ -22,9 +22,9 @@
     { "numero": 7, "direccion": "horizontal", "fila": 8, "col": 2, "texto": "Intervalo entre DO y SOL." },
     { "numero": 8, "direccion": "horizontal", "fila": 9, "col": 9, "texto": "Cadencia que termina en dominante, sensación de pausa." },
     { "numero": 1, "direccion": "vertical", "fila": 0, "col": 1, "texto": "Acorde que da sensación de reposo." },
-    { "numero": 9, "direccion": "vertical", "fila": 4, "col": 11, "texto": "Tonalidad con un bemol (FA)." },
+    { "numero": 9, "direccion": "vertical", "fila": 4, "col": 11, "texto": "Tonalidad con un bemol (FA MAYOR)." },
     { "numero": 10, "direccion": "vertical", "fila": 4, "col": 13, "texto": "Proceso de cambiar de una tonalidad a otra." },
-    { "numero": 11, "direccion": "vertical", "fila": 6, "col": 6, "texto": "Tonalidad relativa menor de Do mayor (LA)." },
-    { "numero": 12, "direccion": "vertical", "fila": 7, "col": 10, "texto": "Tonalidad con un sostenido (SOL)." }
+    { "numero": 11, "direccion": "vertical", "fila": 6, "col": 6, "texto": "Tonalidad relativa menor de Do mayor (LA MENOR)." },
+    { "numero": 12, "direccion": "vertical", "fila": 7, "col": 10, "texto": "Tonalidad con un sostenido (SOL MAYOR)." }
   ]
 }
