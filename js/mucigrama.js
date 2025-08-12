@@ -43,7 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- FUNCIONES DE BOTONES ---
     function limpiarCrucigrama() {
-        document.querySelectorAll('.cell:not(.black)').forEach(cell => {
+        document.querySelectorAll('.cell:not(.inactive)').forEach(cell => {
             cell.value = '';
             cell.style.backgroundColor = 'white';
         });
@@ -51,7 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function verificarRespuestas() {
         const solution = crosswordData.solucion;
-        document.querySelectorAll('.cell:not(.black)').forEach(cell => {
+        document.querySelectorAll('.cell:not(.inactive)').forEach(cell => {
             const { row, col } = cell.dataset;
             if (cell.value !== '') {
                 cell.style.backgroundColor = cell.value.toUpperCase() === solution[row][col] ? '#d4edda' : '#f8d7da';
@@ -64,7 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- FUNCIÓN MEJORADA PARA GENERAR LA REJILLA ---
     function generateGrid() {
         const solution = crosswordData.solucion;
-        gridContainer.style.gridTemplateColumns = `repeat(${solution[0].length}, 35px)`; // Un poco más ancha la celda
+        gridContainer.style.gridTemplateColumns = `repeat(${solution[0].length}, 35px)`;
 
         solution.forEach((row, rowIndex) => {
             row.forEach((cell, colIndex) => {
@@ -76,11 +76,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 input.dataset.col = colIndex;
                 input.classList.add('cell');
 
-                if (cell === '0') {
-                    input.classList.add('black');
+                // NUEVA LÓGICA: Usamos ' ' para casillas inactivas
+                if (cell === ' ') {
+                    input.classList.add('inactive');
                     input.disabled = true;
                 } else {
-                    // MÉTODO NUEVO: Añadimos el número como un atributo de datos
                     const clue = crosswordData.pistas.find(p => p.fila === rowIndex && p.col === colIndex);
                     if (clue) {
                         input.dataset.clueNumber = clue.numero;
@@ -94,7 +94,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
     
-    // --- LÓGICA DE INTERACCIÓN (SIN CAMBIOS GRANDES) ---
+    // --- LÓGICA DE INTERACCIÓN ---
     function handleClick(e) {
         const clickedCell = e.target;
         if (document.activeElement === clickedCell) {
